@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.controller;
+package ru.yandex.practicum.filmorate.validation;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,20 +10,12 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Аннотация для класса @SpringBootTest нужна для запуска SpringBoot
- * Тут тестируется только методы валидации. Сообщения, например:
- * "23:42:52.491 [main] WARN r.y.p.filmorate.exception.ValidationException
- * - Электронная почта не может быть пустой и должна содержать символ '@'"
- * При тестировании всё равно будут попадать в лог при срабатывании исключений
- */
-class UserControllerTest {
+class UserValidatorsTest {
 
-    User user;
-    final UserController userController = new UserController();
+    private User user;
 
     @BeforeEach
-    public void InitEach() {
+    void InitEach() {
         user = new User();
         user.setLogin("dolore");
         user.setName("Nick Name");
@@ -39,7 +31,7 @@ class UserControllerTest {
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() {
-                userController.userValidation(user);
+                Validators.userValidation(user);
             }
         });
     }
@@ -55,22 +47,22 @@ class UserControllerTest {
                     @Override
                     public void execute() {
                         user.setEmail("");
-                        userController.userValidation(user);
+                        Validators.userValidation(user);
                     }
                 });
 
-        assertEquals("Электронная почта не может быть пустой и должна содержать символ '@'", e.getMessage());
+        assertEquals("Email cannot be blank and must contain the '@' symbol", e.getMessage());
 
         final ValidationException e2 = assertThrows(ValidationException.class,
                 new Executable() {
                     @Override
                     public void execute() {
                         user.setEmail("mail#mail.ru");
-                        userController.userValidation(user);
+                        Validators.userValidation(user);
                     }
                 });
 
-        assertEquals("Электронная почта не может быть пустой и должна содержать символ '@'", e2.getMessage());
+        assertEquals("Email cannot be blank and must contain the '@' symbol", e2.getMessage());
     }
 
     /**
@@ -84,22 +76,22 @@ class UserControllerTest {
                     @Override
                     public void execute() {
                         user.setLogin("");
-                        userController.userValidation(user);
+                        Validators.userValidation(user);
                     }
                 });
 
-        assertEquals("Логин не может быть пустым и содержать пробелы", e.getMessage());
+        assertEquals("Login cannot be empty or contain spaces", e.getMessage());
 
         final ValidationException e2 = assertThrows(ValidationException.class,
                 new Executable() {
                     @Override
                     public void execute() {
                         user.setLogin("aaaa bbbb");
-                        userController.userValidation(user);
+                        Validators.userValidation(user);
                     }
                 });
 
-        assertEquals("Логин не может быть пустым и содержать пробелы", e2.getMessage());
+        assertEquals("Login cannot be empty or contain spaces", e2.getMessage());
     }
 
     /**
@@ -109,7 +101,7 @@ class UserControllerTest {
     @Test
     void userValidationTestForBlankName() {
         user.setName("");
-        userController.userValidation(user);
+        Validators.userValidation(user);
         assertEquals("dolore", user.getName());
     }
 
@@ -125,11 +117,11 @@ class UserControllerTest {
                     public void execute() {
                         LocalDate nowPlusOneDay = LocalDate.now().plusDays(1);
                         user.setBirthday(nowPlusOneDay);
-                        userController.userValidation(user);
+                        Validators.userValidation(user);
                     }
                 });
 
-        assertEquals("Дата рождения не может быть в будущем", e.getMessage());
+        assertEquals("Date of birth cannot be in the future", e.getMessage());
     }
 
 }

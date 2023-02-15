@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.controller;
+package ru.yandex.practicum.filmorate.validation;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,16 +9,15 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FilmControllerTest {
+class FilmValidatorsTest {
 
-    Film film;
-    final FilmController filmController = new FilmController();
+    private Film film;
 
     @BeforeEach
-    public void InitEach() {
+    void InitEach() {
         film = new Film();
         film.setName("nisi eiusmod");
-        film.setDescription("*".repeat(Constants.MAX_FILM_DESC_LENGHT));
+        film.setDescription("*".repeat(Constants.MAX_FILM_DESC_LENGTH));
         film.setReleaseDate(Constants.FIRST_FILM_DATE);
         film.setDuration(100);
     }
@@ -31,7 +30,7 @@ class FilmControllerTest {
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() {
-                filmController.filmValidation(film);
+                Validators.filmValidation(film);
             }
         });
     }
@@ -47,11 +46,11 @@ class FilmControllerTest {
                     @Override
                     public void execute() {
                         film.setName("");
-                        filmController.filmValidation(film);
+                        Validators.filmValidation(film);
                     }
                 });
 
-        assertEquals("Название фильма не может быть пустым", e.getMessage());
+        assertEquals("Name of the movie cannot be empty", e.getMessage());
     }
 
     /**
@@ -64,12 +63,12 @@ class FilmControllerTest {
                 new Executable() {
                     @Override
                     public void execute() {
-                        film.setDescription("*".repeat(Constants.MAX_FILM_DESC_LENGHT+1));
-                        filmController.filmValidation(film);
+                        film.setDescription("*".repeat(Constants.MAX_FILM_DESC_LENGTH + 1));
+                        Validators.filmValidation(film);
                     }
                 });
 
-        assertEquals("Максимальная длина описания фильма — 200 символов", e.getMessage());
+        assertEquals("Maximum length of the movie description is 200 characters", e.getMessage());
     }
 
     /**
@@ -83,11 +82,11 @@ class FilmControllerTest {
                     @Override
                     public void execute() {
                         film.setReleaseDate(Constants.FIRST_FILM_DATE.minusDays(1));
-                        filmController.filmValidation(film);
+                        Validators.filmValidation(film);
                     }
                 });
 
-        assertEquals("Дата релиза фильма не может быть раньше 28 декабря 1895 года", e.getMessage());
+        assertEquals("Date of the movie's release cannot be earlier than December 28, 1895", e.getMessage());
     }
 
     /**
@@ -101,22 +100,22 @@ class FilmControllerTest {
                     @Override
                     public void execute() {
                         film.setDuration(0); // Ноль не является положительным числом
-                        filmController.filmValidation(film);
+                        Validators.filmValidation(film);
                     }
                 });
 
-        assertEquals("Продолжительность фильма должна быть положительной", e.getMessage());
+        assertEquals("Movie duration must be positive", e.getMessage());
 
         final ValidationException e2 = assertThrows(ValidationException.class,
                 new Executable() {
                     @Override
                     public void execute() {
                         film.setDuration(-10);
-                        filmController.filmValidation(film);
+                        Validators.filmValidation(film);
                     }
                 });
 
-        assertEquals("Продолжительность фильма должна быть положительной", e2.getMessage());
+        assertEquals("Movie duration must be positive", e2.getMessage());
     }
 
 }
