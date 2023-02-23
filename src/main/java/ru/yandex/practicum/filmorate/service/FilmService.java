@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
@@ -17,36 +17,30 @@ import java.util.stream.Collectors;
  * Каждый пользователь может поставить лайк фильму только один раз.
  */
 @Service
+@RequiredArgsConstructor
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserService userService;
 
-
-    @Autowired
-    public FilmService(FilmStorage filmStorage, UserService userService) {
-        this.filmStorage = filmStorage;
-        this.userService = userService;
-    }
-
-    public Film findById(int id) {
-        return filmStorage.findById(id);
+    public Film getById(int id) {
+        return filmStorage.getById(id);
     }
 
     public Film addLike(int id, int userId) {
-        Film film = findById(id);
-        User user = userService.findById(userId);
+        Film film = getById(id);
+        User user = userService.getById(userId);
         film.getLikes().add(userId);
         return film;
     }
 
     public Film delLike(int id, int userId) {
-        Film film = findById(id);
-        User user = userService.findById(userId);
+        Film film = getById(id);
+        User user = userService.getById(userId);
         film.getLikes().remove(userId);
         return film;
     }
 
-    public List<Film> getPopular(int count) {
+    public List<Film> findPopular(int count) {
         List<Film> popFilms = new ArrayList<>(filmStorage.findAllFilms());
         return popFilms.stream()
                 .sorted(Comparator.comparingInt(Film::getLikesCount).reversed())

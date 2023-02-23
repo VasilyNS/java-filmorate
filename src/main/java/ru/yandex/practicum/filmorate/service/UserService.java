@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import ru.yandex.practicum.filmorate.model.User;
@@ -17,32 +17,28 @@ import java.util.List;
  * что Саша теперь друг Лены.
  */
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserStorage userStorage;
 
-    @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
-
-    public User findById(int id) {
-        return userStorage.findById(id);
+    public User getById(int id) {
+        return userStorage.getById(id);
     }
 
     public User addToFriend(int id, int friendId) {
-        User user1 = findById(id);
-        User user2 = findById(friendId);
+        User user1 = getById(id);
+        User user2 = getById(friendId);
         user1.getFriends().add(friendId);
         user2.getFriends().add(id);
         return user1;
     }
 
-    public List<User> getCommonFriends(int id, int otherId) {
+    public List<User> findCommonFriends(int id, int otherId) {
         List<User> commonFriends = new ArrayList<>();
-        User user1 = findById(id);
-        User user2 = findById(otherId);
+        User user1 = getById(id);
+        User user2 = getById(otherId);
         for (Integer f : user1.getFriends()) {
-            User userMbFriend = findById(f);
+            User userMbFriend = getById(f);
             if (f != id && f != otherId && user2.getFriends().contains(f)) {
                 commonFriends.add(userMbFriend);
             }
@@ -50,19 +46,19 @@ public class UserService {
         return commonFriends;
     }
 
-    public List<User> getFriends(@PathVariable int id) {
+    public List<User> findFriends(@PathVariable int id) {
         List<User> friends = new ArrayList<>();
-        User user1 = findById(id);
+        User user1 = getById(id);
         for (Integer f : user1.getFriends()) {
-            User friend = findById(f);
+            User friend = getById(f);
             friends.add(friend);
         }
         return friends;
     }
 
     public User deleteFromFriends(@PathVariable int id, @PathVariable int friendId) {
-        User user1 = findById(id);
-        User user2 = findById(friendId);
+        User user1 = getById(id);
+        User user2 = getById(friendId);
         user1.getFriends().remove(friendId);
         user2.getFriends().remove(id);
         return user1;

@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -9,14 +10,10 @@ import java.util.Collection;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class UserController {
     private final UserStorage userStorage;
     private final UserService userService;
-
-    UserController(UserStorage userStorage, UserService userService) {
-        this.userStorage = userStorage;
-        this.userService = userService;
-    }
 
     /**
      * Получение всех пользователей
@@ -53,8 +50,8 @@ public class UserController {
      * @return
      */
     @GetMapping("/users/{id}")
-    public User findById(@PathVariable int id) {
-        return userService.findById(id);
+    public User getById(@PathVariable int id) {
+        return userService.getById(id);
     }
 
     /**
@@ -75,8 +72,8 @@ public class UserController {
      * @return
      */
     @GetMapping("/users/{id}/friends/common/{otherId}")
-    public List<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
-        return userService.getCommonFriends(id, otherId);
+    public List<User> findCommonFriends(@PathVariable int id, @PathVariable int otherId) {
+        return userService.findCommonFriends(id, otherId);
     }
 
     /**
@@ -85,8 +82,8 @@ public class UserController {
      * @return
      */
     @GetMapping("/users/{id}/friends")
-    public List<User> getFriends(@PathVariable int id) {
-        return userService.getFriends(id);
+    public List<User> findFriends(@PathVariable int id) {
+        return userService.findFriends(id);
     }
 
     /**

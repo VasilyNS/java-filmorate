@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -9,14 +10,10 @@ import java.util.Collection;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class FilmController {
     private final FilmStorage filmStorage;
     private final FilmService filmService;
-
-    public FilmController(FilmStorage filmStorage, FilmService filmService) {
-        this.filmStorage = filmStorage;
-        this.filmService = filmService;
-    }
 
     /**
      * Получние списка всех фильмов
@@ -53,8 +50,8 @@ public class FilmController {
      * @return
      */
     @GetMapping("/films/{id}")
-    public Film findById(@PathVariable int id) {
-        return filmService.findById(id);
+    public Film getById(@PathVariable int id) {
+        return filmService.getById(id);
     }
 
     /**
@@ -78,8 +75,8 @@ public class FilmController {
      * Если значение параметра count не задано, то count = 10.
      */
     @GetMapping("/films/popular")
-    public List<Film> getPopular(@RequestParam(defaultValue = "10", required = false) Integer count) {
-        return filmService.getPopular(count);
+    public List<Film> findPopular(@RequestParam(defaultValue = "10", required = false) Integer count) {
+        return filmService.findPopular(count);
     }
 
 }
