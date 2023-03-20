@@ -36,7 +36,7 @@ public class InMemoryUserStorage implements UserStorage {
     public User updateUser(User user) {
         Validators.userValidation(user);
         if (!users.containsKey(user.getId())) {
-            throw new UserNotFoundException("No user with id=" + user.getId());
+            throw new UserNotFoundException(user.getId());
         }
         users.put(user.getId(), user);
         log.info("Updated user with id=" + user.getId());
@@ -45,7 +45,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     public User getById(int id) {
         if (!users.containsKey(id)) {
-            throw new UserNotFoundException("No user with id=" + id);
+            throw new UserNotFoundException(id);
         }
         return users.get(id);
     }

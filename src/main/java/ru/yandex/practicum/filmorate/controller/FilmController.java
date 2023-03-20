@@ -20,7 +20,7 @@ public class FilmController {
      * @return
      */
     @GetMapping("/films")
-    public Collection<Film> findAll() {
+    public Collection<Film> getAll() {
         return filmStorage.findAllFilms();
     }
 
@@ -75,7 +75,7 @@ public class FilmController {
      * Если значение параметра count не задано, то count = 10.
      */
     @GetMapping("/films/popular")
-    public List<Film> findPopular(@RequestParam(defaultValue = "10", required = false) Integer count) {
+    public List<Film> getPopular(@RequestParam(defaultValue = "10", required = false) Integer count) {
         return filmService.findPopular(count);
     }
 

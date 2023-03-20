@@ -36,7 +36,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film updateFilm(Film film) {
         Validators.filmValidation(film);
         if (!films.containsKey(film.getId())) {
-            throw new FilmNotFoundException("No movie with id=" + film.getId());
+            throw new FilmNotFoundException(film.getId());
         }
         films.put(film.getId(), film);
         log.info("Updated film with id=" + film.getId());
@@ -45,7 +45,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     public Film getById(int id) {
         if (!films.containsKey(id)) {
-            throw new FilmNotFoundException("No movie with id=" + id);
+            throw new FilmNotFoundException(id);
         }
         return films.get(id);
     }

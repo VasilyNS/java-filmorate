@@ -20,7 +20,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/users")
-    Collection<User> findAll() {
+    Collection<User> getAll() {
         return userStorage.findAllUsers();
     }
 
@@ -72,7 +72,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/users/{id}/friends/common/{otherId}")
-    public List<User> findCommonFriends(@PathVariable int id, @PathVariable int otherId) {
+    public List<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
         return userService.findCommonFriends(id, otherId);
     }
 
@@ -82,7 +82,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/users/{id}/friends")
-    public List<User> findFriends(@PathVariable int id) {
+    public List<User> getFriends(@PathVariable int id) {
         return userService.findFriends(id);
     }
 
