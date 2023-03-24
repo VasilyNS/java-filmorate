@@ -17,9 +17,7 @@
 - **"LIKES"** - аналогично таблице **"GENRE"** связывает фильмы и пользователей, хранит все лайки.
   По user_id можно получить все лайки (id фильмов), которые поставил этот пользователь.
   По film_id можно получить все лайки (id пользователей), которые пользователи поставили этом фильму.
-- **"FRIEND"** - таблица для хранения дружбы между пользователями. Одна строка - одна запись дружбы. Если флаг
-  **"confirm"** установлен в **FALSE**, то дружба односторонняя, то есть для user_id_1 второй пользователь является
-  другом, а обратно - нет. При значении **TRUE** - user_id_2 тоже является другом user_id_1.
+- **"FRIEND"** - таблица для хранения дружбы между пользователями. Одна строка - одна запись односторонней дружбы.
 
 *Таблицы "LIKES" и "USERS" названы во множественном числе, чтобы не конфликтовать с зарезервированными словами SQL.*
 
@@ -46,28 +44,3 @@ SELECT u.name FROM likes AS l
 LEFT JOIN users AS u ON l.user_id = u.user_id
 WHERE l.film_id = 4
 ```
-Вывод имен всех друзей пользователя по user_id (для примера 5):
-```sql
-SELECT u.name FROM users AS u WHERE u.user_id IN
-(SELECT f.user_id_2 AS frend FROM friend AS f WHERE f.user_id_1 = 5
-UNION ALL
-SELECT f.user_id_1 AS frend FROM friend AS f WHERE f.user_id_2 = 5 AND confirm = TRUE)
-```
-Вывод всех общих друзей двух пользователей (для примера 5 и 2):
-```sql
-(SELECT u.user_id AS id FROM users AS u WHERE u.user_id IN
-(SELECT f.user_id_2 AS frend  FROM friend AS f 
-WHERE f.user_id_1 = 5
-UNION ALL
-SELECT f.user_id_1 AS frend FROM friend AS f
-WHERE f.user_id_2 = 5 AND confirm = TRUE))
-INTERSECT
-(SELECT u.user_id AS id FROM users AS u WHERE u.user_id IN
-(SELECT f.user_id_2 AS frend  FROM friend AS f 
-WHERE f.user_id_1 = 2
-UNION ALL
-SELECT f.user_id_1 AS frend FROM friend AS f
-WHERE f.user_id_2 = 2 AND confirm = TRUE))
-```
-
-Все запросы проверены на тестовой базе.

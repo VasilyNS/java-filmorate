@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.constant;
+package ru.yandex.practicum.filmorate;
 import java.time.LocalDate;
 
 public class Constants {

@@ -4,50 +4,26 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.dao.UserDao;
 
-import java.util.Collection;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 public class UserController {
-    private final UserStorage userStorage;
+    private final UserDao userDao;
     private final UserService userService;
 
     /**
-     * Получение всех пользователей
-     * @return
-     */
-    @GetMapping("/users")
-    Collection<User> getAll() {
-        return userStorage.findAllUsers();
-    }
-
-    /**
      * Добавление пользователя
-     * @param user
-     * @return
      */
     @PostMapping(value = "/users")
-    User create(@RequestBody User user) {
-        return userStorage.createUser(user);
-    }
-
-    /**
-     * Обновление пользователя
-     * @param user
-     * @return
-     */
-    @PutMapping(value = "/users")
-    User put(@RequestBody User user) {
-        return userStorage.updateUser(user);
+    public User create(@RequestBody User user) {
+        return userDao.createUser(user);
     }
 
     /**
      * Получение пользователя по id
-     * @param id
-     * @return
      */
     @GetMapping("/users/{id}")
     public User getById(@PathVariable int id) {
@@ -55,31 +31,31 @@ public class UserController {
     }
 
     /**
-     * Добавление в друзья пользователей с id и friendId
-     * @param id
-     * @param friendId
-     * @return
+     * Обновление пользователя
      */
-    @PutMapping("/users/{id}/friends/{friendId}")
-    public User addToFriend(@PathVariable int id, @PathVariable int friendId) {
-        return userService.addToFriend(id, friendId);
+    @PutMapping(value = "/users")
+    public User put(@RequestBody User user) {
+        return userDao.updateUser(user);
     }
 
     /**
-     * Получение списка друзей, общих с другим пользователем
-     * @param id
-     * @param otherId
-     * @return
+     * Получение всех пользователей
      */
-    @GetMapping("/users/{id}/friends/common/{otherId}")
-    public List<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
-        return userService.findCommonFriends(id, otherId);
+    @GetMapping("/users")
+    public List<User> getAll() {
+        return userDao.findAllUsers();
+    }
+
+    /**
+     * Добавление в друзья пользователей с id и friendId
+     */
+    @PutMapping("/users/{id}/friends/{friendId}")
+    public void addToFriend(@PathVariable int id, @PathVariable int friendId) {
+        userService.addToFriend(id, friendId);
     }
 
     /**
      * Список друзей пользователя с id
-     * @param id
-     * @return
      */
     @GetMapping("/users/{id}/friends")
     public List<User> getFriends(@PathVariable int id) {
@@ -87,14 +63,19 @@ public class UserController {
     }
 
     /**
+     * Получение списка друзей, общих с другим пользователем
+     */
+    @GetMapping("/users/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
+        return userService.findCommonFriends(id, otherId);
+    }
+
+    /**
      * Удаление из друзей
-     * @param id
-     * @param friendId
-     * @return
      */
     @DeleteMapping("/users/{id}/friends/{friendId}")
-    public User deleteFromFriends(@PathVariable int id, @PathVariable int friendId) {
-        return userService.deleteFromFriends(id, friendId);
+    public void deleteFromFriends(@PathVariable int id, @PathVariable int friendId) {
+        userService.deleteFromFriends(id, friendId);
     }
 
 }
