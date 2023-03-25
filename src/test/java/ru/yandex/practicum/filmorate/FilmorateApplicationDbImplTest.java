@@ -56,6 +56,7 @@ class FilmorateApplicationDbImplTest {
                 .addScript("/testdata.sql")
                 .build();
         jdbcTemplate = new JdbcTemplate(edb);
+
         userDao = new UserDaoImpl(jdbcTemplate);
         genreDao = new GenreDaoImpl(jdbcTemplate);
         mpaDao = new MpaDaoImpl(jdbcTemplate);
@@ -64,8 +65,8 @@ class FilmorateApplicationDbImplTest {
         testuser = new User(333, "test@E.RU", "testL", "testN",
                 LocalDate.of(2001, 12, 25));
         testfilm = new Film(333, "testN", "testD", LocalDate.of(2001, 12, 25),
-                177);
-        testfilm.setMpa(new Mpa(1, ""));
+                177, new Mpa(1, ""), new ArrayList<GenreBook>());
+
     }
 
     @AfterEach
@@ -406,13 +407,13 @@ class FilmorateApplicationDbImplTest {
 
     @Test
     public void testGenreDaoFindAllGenresForFilm() {
-        List<Genre> g = genreDao.findAllGenresForFilm(1);
+        List<GenreBook> g = genreDao.findAllGenresForFilm(1);
         // {1, Комедия}, {2, Драма}, {3, Мультфильм}, {4, Триллер}
         assertEquals(4, g.size());
 
-        Optional<Genre> gtest = Optional.of(g.get(3));
+        Optional<GenreBook> gtest = Optional.of(g.get(3));
         assertThat(gtest).isPresent();
-        assertEquals(4, gtest.get().getGenreId());
+        assertEquals(4, gtest.get().getId());
     }
 
     @Test

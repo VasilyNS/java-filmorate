@@ -12,6 +12,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class FilmController {
+
     private final FilmDao filmDao;
     private final FilmService filmService;
 
@@ -19,7 +20,7 @@ public class FilmController {
     /**
      * Добавление фильма
      */
-    @PostMapping(value = "/films")
+    @PostMapping("/films")
     public Film create(@RequestBody Film film) {
         return filmDao.createFilm(film);
     }
@@ -35,7 +36,7 @@ public class FilmController {
     /**
      * Обновление фильма с использованием id в body
      */
-    @PutMapping(value = "/films")
+    @PutMapping("/films")
     public Film put(@RequestBody Film film) {
         return filmDao.updateFilm(film);
     }
@@ -50,8 +51,9 @@ public class FilmController {
 
     /**
      * Пользователь ставит лайк фильму
+     *
      */
-    @PutMapping(value = "/films/{id}/like/{userId}")
+    @PutMapping("/films/{id}/like/{userId}")
     public void addLike(@PathVariable int id, @PathVariable int userId) {
         filmService.addLike(id, userId);
     }
@@ -59,7 +61,7 @@ public class FilmController {
     /**
      * Пользователь удаляет лайк
      */
-    @DeleteMapping(value = "/films/{id}/like/{userId}")
+    @DeleteMapping("/films/{id}/like/{userId}")
     public void delLike(@PathVariable int id, @PathVariable int userId) {
         filmService.delLike(id, userId);
     }

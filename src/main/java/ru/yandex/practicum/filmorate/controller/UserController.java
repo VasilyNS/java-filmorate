@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -8,6 +9,7 @@ import ru.yandex.practicum.filmorate.dao.UserDao;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class UserController {
@@ -17,7 +19,7 @@ public class UserController {
     /**
      * Добавление пользователя
      */
-    @PostMapping(value = "/users")
+    @PostMapping("/users")
     public User create(@RequestBody User user) {
         return userDao.createUser(user);
     }
@@ -33,7 +35,7 @@ public class UserController {
     /**
      * Обновление пользователя
      */
-    @PutMapping(value = "/users")
+    @PutMapping("/users")
     public User put(@RequestBody User user) {
         return userDao.updateUser(user);
     }

@@ -22,12 +22,15 @@ public class Validators {
         if (film.getName() == null || film.getName().isBlank()) {
             throw new ValidationException("Name of the movie cannot be empty");
         }
+
         if (film.getDescription().length() > Constants.MAX_FILM_DESC_LENGTH) {
             throw new ValidationException("Maximum length of the movie description is 200 characters");
         }
+
         if (film.getReleaseDate().isBefore(Constants.FIRST_FILM_DATE)) {
             throw new ValidationException("Date of the movie's release cannot be earlier than December 28, 1895");
         }
+
         if (film.getDuration() <= 0) {
             throw new ValidationException("Movie duration must be positive");
         }
@@ -44,13 +47,16 @@ public class Validators {
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             throw new ValidationException("Email cannot be blank and must contain the '@' symbol");
         }
+
         if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
             throw new ValidationException("Login cannot be empty or contain spaces");
         }
+
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
             log.info("User with id=" + user.getId() + " with blank name, login used");
         }
+
         LocalDate nd = LocalDate.now();
         if (nd.isBefore(user.getBirthday())) {
             throw new ValidationException("Date of birth cannot be in the future");

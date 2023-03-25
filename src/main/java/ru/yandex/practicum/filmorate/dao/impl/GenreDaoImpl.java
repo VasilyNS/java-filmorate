@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dao.GenreDao;
 import ru.yandex.practicum.filmorate.exception.GenreBookNotFoundException;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.GenreBook;
 
 import java.sql.ResultSet;
@@ -22,16 +21,18 @@ public class GenreDaoImpl implements GenreDao {
 
     public List<GenreBook> findAllGenreBook(){
         String sql = "SELECT * FROM genre_book";
-        List<GenreBook> allGenres = jdbcTemplate.query(sql, (rs, rowNum) -> makeGenreBook(rs));
-        return allGenres;
+        log.info("List of all Genres has been sent");
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeGenreBook(rs));
     }
 
     public GenreBook getGenreById(int id) {
         String sql = "SELECT * FROM genre_book WHERE genre_id = ?";
         List<GenreBook> allGenres = jdbcTemplate.query(sql, (rs, rowNum) -> makeGenreBook(rs), id);
+
         if (allGenres.size() == 0) {
             throw new GenreBookNotFoundException(id);
         } else {
+            log.info("Genre was gotten with id=" + id);
             return allGenres.get(0);
         }
     }
@@ -57,18 +58,15 @@ public class GenreDaoImpl implements GenreDao {
         jdbcTemplate.update(sql, filmId);
     }
 
-    public List<Genre> findAllGenresForFilm(int filmId){
-        String sql = "SELECT * FROM genre WHERE film_id = ?";
-        List<Genre> allGenres = jdbcTemplate.query(sql, (rs, rowNum) -> makeGenre(rs), filmId);
-        return allGenres;
+    public List<GenreBook> findAllGenresForFilm(int filmId){
+        String sql = "SELECT g.genre_id AS genre_id, gb.name AS name FROM genre AS g " +
+                     "LEFT JOIN genre_book AS gb ON g.genre_id = gb.genre_id " +
+                     "WHERE g.film_id = ?";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeGenreBook(rs), filmId);
     }
 
     private GenreBook makeGenreBook(ResultSet rs) throws SQLException {
         return new GenreBook(rs.getInt("genre_id"), rs.getString("name"));
-    }
-
-    private Genre makeGenre(ResultSet rs) throws SQLException {
-        return new Genre(rs.getInt("film_id"), rs.getInt("genre_id"));
     }
 
 }
