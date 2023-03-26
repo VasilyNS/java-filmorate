@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * целочисленный идентификатор — id;
@@ -12,18 +14,30 @@ import java.util.Set;
  * описание — description;
  * дата релиза — releaseDate;
  * продолжительность фильма — duration;
- * id пользователей, кто ставит лайки - likes;
  */
 @Data
+@Accessors(chain = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Film {
+
     private int id;
     private String name;
     private String description;
     private LocalDate releaseDate;
     private int duration;
-    private Set<Integer> likes = new HashSet<>();
 
-    public int getLikesCount() {
-        return likes.size();
+    private Mpa mpa;
+    private List<GenreBook> genres = new ArrayList<>();
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> values = new HashMap<>();
+        values.put("name", name);
+        values.put("description", description);
+        values.put("release_date", releaseDate);
+        values.put("duration", duration);
+        values.put("rating_id", mpa.getId());
+        return values;
     }
+
 }

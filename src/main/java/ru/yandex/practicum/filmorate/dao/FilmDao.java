@@ -1,21 +1,27 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.dao;
 
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Интерфейс для определения методов добавления,
  * удаления и модификации объектов
  */
-public interface FilmStorage {
-
-    Collection<Film> findAllFilms();
+public interface FilmDao {
 
     Film createFilm(Film film);
 
+    Film getById(int id);
+
     Film updateFilm(Film film);
 
-    Film getById(int id);
+    List<Film> findAllFilms();
+
+    void addLike(int id, int userId);
+
+    void delLike(int id, int userId);
+
+    List<Film> findPopular(int count);
 
 }

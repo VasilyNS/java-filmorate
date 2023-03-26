@@ -2,66 +2,39 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.dao.UserDao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Класс для реализации операций с пользователями, такими как
  * добавление в друзья, удаление из друзей, вывод списка общих друзей.
- * Пользователям не надо одобрять заявки в друзья — добавляем сразу.
- * То есть если Лена стала другом Саши, то это значит,
- * что Саша теперь друг Лены.
  */
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserStorage userStorage;
+
+    private final UserDao userDao;
 
     public User getById(int id) {
-        return userStorage.getById(id);
+        return userDao.getById(id);
     }
 
-    public User addToFriend(int id, int friendId) {
-        User user1 = getById(id);
-        User user2 = getById(friendId);
-        user1.getFriends().add(friendId);
-        user2.getFriends().add(id);
-        return user1;
+    public void addToFriend(int id1, int id2) {
+        userDao.addToFriend(id1, id2);
     }
 
-    public List<User> findCommonFriends(int id, int otherId) {
-        List<User> commonFriends = new ArrayList<>();
-        User user1 = getById(id);
-        User user2 = getById(otherId);
-        for (Integer f : user1.getFriends()) {
-            User userMbFriend = getById(f);
-            if (f != id && f != otherId && user2.getFriends().contains(f)) {
-                commonFriends.add(userMbFriend);
-            }
-        }
-        return commonFriends;
+    public List<User> findFriends(int id) {
+        return userDao.findFriends(id);
     }
 
-    public List<User> findFriends(@PathVariable int id) {
-        List<User> friends = new ArrayList<>();
-        User user1 = getById(id);
-        for (Integer f : user1.getFriends()) {
-            User friend = getById(f);
-            friends.add(friend);
-        }
-        return friends;
+    public List<User> findCommonFriends(int id1, int id2) {
+        return userDao.findCommonFriends(id1, id2);
     }
 
-    public User deleteFromFriends(@PathVariable int id, @PathVariable int friendId) {
-        User user1 = getById(id);
-        User user2 = getById(friendId);
-        user1.getFriends().remove(friendId);
-        user2.getFriends().remove(id);
-        return user1;
+    public void deleteFromFriends(int id1, int id2) {
+        userDao.deleteFromFriends(id1, id2);
     }
 
 }
