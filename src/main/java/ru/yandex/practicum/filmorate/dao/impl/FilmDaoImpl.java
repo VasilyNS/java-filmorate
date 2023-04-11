@@ -11,7 +11,9 @@ import ru.yandex.practicum.filmorate.dao.GenreDao;
 import ru.yandex.practicum.filmorate.dao.MpaDao;
 import ru.yandex.practicum.filmorate.dao.UserDao;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.GenreBook;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.validation.Validators;
 
 import java.sql.ResultSet;
@@ -143,6 +145,23 @@ public class FilmDaoImpl implements FilmDao {
         jdbcTemplate.update(sqlQuery, id);
 
         log.info("Film id: " + id + " deleted");
+    }
+
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        String sqlQuery = "SELECT f.*, r.rate " +
+                        "FROM LIKES l " +
+                        "JOIN LIKES l2 ON l2.FILM_ID = l.FILM_ID " +
+                        "JOIN FILM f ON l.FILM_ID = f.FILM_ID " +
+                        "JOIN (SELECT l3.FILM_ID, COUNT(USER_ID) AS rate " +
+                                "FROM LIKES l3 " +
+                                "GROUP BY l3.FILM_ID) AS r ON r.film_id = l.FILM_ID " +
+                        "WHERE l.USER_ID = ? AND l2.USER_ID = ? " +
+                        "ORDER BY r.rate DESC";
+
+        List<Film> commonFilms = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs), userId, friendId);
+
+        log.info("Getting common films");
+        return commonFilms;
     }
 
     /**

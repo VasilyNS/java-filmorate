@@ -38,4 +38,8 @@ public class FilmService {
         filmDao.deleteFilm(id);
     }
 
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        return filmDao.getCommonFilms(userId, friendId);
+    }
+
 }
