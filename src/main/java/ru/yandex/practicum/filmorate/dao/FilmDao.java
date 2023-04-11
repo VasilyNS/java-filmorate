@@ -24,4 +24,6 @@ public interface FilmDao {
 
     List<Film> findPopular(int count);
 
+    void deleteFilm(int id);
+
 }

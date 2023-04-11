@@ -34,4 +34,8 @@ public class FilmService {
         return filmDao.findPopular(count);
     }
 
+    public void deleteFilm(int id) {
+        filmDao.deleteFilm(id);
+    }
+
 }

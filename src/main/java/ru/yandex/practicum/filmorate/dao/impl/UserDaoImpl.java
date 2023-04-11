@@ -135,6 +135,8 @@ public class UserDaoImpl implements UserDao {
         String sqlQuery = "DELETE FROM users WHERE user_id = ?";
 
         jdbcTemplate.update(sqlQuery, id);
+
+        log.info("User id: " + id + " deleted");
     }
 
     private User makeUser(ResultSet rs) throws SQLException {

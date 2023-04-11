@@ -137,6 +137,14 @@ public class FilmDaoImpl implements FilmDao {
         return popFilms;
     }
 
+    public void deleteFilm(int id) {
+        String sqlQuery = "DELETE FROM film WHERE film_id = ?";
+
+        jdbcTemplate.update(sqlQuery, id);
+
+        log.info("Film id: " + id + " deleted");
+    }
+
     /**
      * Создание из ResultSet сложного объекта - film, который включает подобъект:
      * "mpa": { "id": 3, "name": "PG-13" }

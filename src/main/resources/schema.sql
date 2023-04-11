@@ -29,7 +29,7 @@ CREATE TABLE "FILM" (
 CREATE TABLE "GENRE" (
     film_id int,
     genre_id int,
-    foreign key (film_id) references FILM(film_id),
+    foreign key (film_id) references FILM(film_id) ON DELETE CASCADE,
     foreign key (genre_id) references GENRE_BOOK(genre_id),
     CONSTRAINT GENRE_PK PRIMARY KEY (film_id, genre_id)
 );
@@ -45,7 +45,7 @@ CREATE TABLE "USERS" (
 CREATE TABLE "LIKES" (
     film_id int,
     user_id int,
-    foreign key (film_id) references FILM(film_id),
+    foreign key (film_id) references FILM(film_id) ON DELETE CASCADE,
     foreign key (user_id) references USERS(user_id) ON DELETE CASCADE,
     CONSTRAINT LIKES_PK PRIMARY KEY (film_id, user_id)
 );
