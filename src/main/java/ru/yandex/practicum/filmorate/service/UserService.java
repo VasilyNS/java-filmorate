@@ -37,4 +37,7 @@ public class UserService {
         userDao.deleteFromFriends(id1, id2);
     }
 
+    public void deleteUser(int id) {
+        userDao.deleteUser(id);
+    }
 }

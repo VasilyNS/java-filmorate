@@ -46,14 +46,14 @@ CREATE TABLE "LIKES" (
     film_id int,
     user_id int,
     foreign key (film_id) references FILM(film_id),
-    foreign key (user_id) references USERS(user_id),
+    foreign key (user_id) references USERS(user_id) ON DELETE CASCADE,
     CONSTRAINT LIKES_PK PRIMARY KEY (film_id, user_id)
 );
 
 CREATE TABLE "FRIEND" (
     user_id_1 int,
     user_id_2 int,
-    foreign key (user_id_1) references USERS(user_id),
-    foreign key (user_id_2) references USERS(user_id),
+    foreign key (user_id_1) references USERS(user_id) ON DELETE CASCADE,
+    foreign key (user_id_2) references USERS(user_id) ON DELETE CASCADE,
     CONSTRAINT FRIEND_PK PRIMARY KEY (user_id_1, user_id_2)
 );
