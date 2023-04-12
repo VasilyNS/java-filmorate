@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.validation.Validators;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Primary
@@ -190,6 +191,59 @@ public class FilmDaoImpl implements FilmDao {
 
         log.info("Getting common films");
         return commonFilms;
+    }
+
+    /**
+     * Поиск пользователя с максимальным числом фильмов,
+     * которые также есть у пользователя, для которого составляются рекомендации.
+     * Далее поиск и возвращения фильмов, которые есть у этого пользователя,
+     * но нет у того, для кого составляются рекомендации
+     */
+    public List<Film> getRecommendations(int userId) {
+        List<Integer> userIdWithMaxCommonFilms = findUserIdWithMaxCommonFilms(userId);
+
+        if (userIdWithMaxCommonFilms.size() == 0) {
+            return new ArrayList<>();
+        }
+
+        return getDifferentFilmsBetweenUsers(userIdWithMaxCommonFilms.get(0), userId);
+    }
+
+    /**
+     * Поиск id пользователя с максимальным числом фильмов,
+     * которые также есть у пользователя, для которого составляются рекомендации
+     */
+    private List<Integer> findUserIdWithMaxCommonFilms(int id) {
+        String sqlFindUserWithMaxCommonFilms = "SELECT l.user_id " +
+                "FROM likes AS l " +
+                "JOIN ( " +
+                "SELECT film_id AS filmId, user_id AS userId " +
+                "FROM likes WHERE user_id = ? " +
+                ") AS u ON l.film_id = u.filmId " +
+                "WHERE NOT l.user_id = u.userId " +
+                "GROUP BY l.user_id " +
+                "ORDER BY COUNT(*) DESC " +
+                "LIMIT 1";
+
+        return jdbcTemplate.queryForList(sqlFindUserWithMaxCommonFilms, Integer.class, id);
+    }
+
+    /**
+     * Поиск фильмов пользователя с id = fromUserId, которых нет у пользователя с id = toUserId
+     */
+    private List<Film> getDifferentFilmsBetweenUsers(int fromUserId, int toUserId) {
+        String sqlGetDifferentFilmsBetweenUsers = "SELECT * " +
+                "FROM film f " +
+                "WHERE film_id IN ( " +
+                "SELECT l.film_id " +
+                "FROM likes AS l " +
+                "WHERE l.user_id = ? " +
+                "AND l.film_id NOT IN ( " +
+                "SELECT film_id AS filmId " +
+                "FROM likes WHERE user_id = ? " +
+                ")" +
+                ")";
+        return jdbcTemplate.query(sqlGetDifferentFilmsBetweenUsers, (rs, rowNum) -> makeFilm(rs), fromUserId, toUserId);
     }
 
     /**
