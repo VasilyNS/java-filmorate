@@ -169,15 +169,15 @@ public class ReviewDaoImpl implements ReviewDao {
     }
 
     private int usefulRows(int reviewId) {
-        SqlRowSet usefulRows = jdbcTemplate.queryForRowSet
-                ("select re.review_id, (coalesce(l.likes, 0) - coalesce(d.dislikes, 0)) as useful\n" +
-                        "from review_estimation as re \n" +
-                        "left outer join (select review_id, count(is_positive) AS likes from review_estimation " +
-                        "where is_positive = true group by review_id) as l on re.review_id = l.review_id\n" +
-                        "left outer join (select review_id, count(is_positive) as dislikes from review_estimation " +
-                        "where is_positive = false group by review_id) as d on re.review_id = d.review_id\n" +
-                        "where re.review_id = ?\n" +
-                        "group by re.review_id;", reviewId);
+        SqlRowSet usefulRows = jdbcTemplate.queryForRowSet("select re.review_id, " +
+                "(coalesce(l.likes, 0) - coalesce(d.dislikes, 0)) as useful\n" +
+                "from review_estimation as re \n" +
+                "left outer join (select review_id, count(is_positive) AS likes from review_estimation " +
+                "where is_positive = true group by review_id) as l on re.review_id = l.review_id\n" +
+                "left outer join (select review_id, count(is_positive) as dislikes from review_estimation " +
+                "where is_positive = false group by review_id) as d on re.review_id = d.review_id\n" +
+                "where re.review_id = ?\n" +
+                "group by re.review_id;", reviewId);
 
         if (usefulRows.next()) {
             return usefulRows.getInt("useful");
