@@ -72,7 +72,7 @@ class FilmorateApplicationDbImplTest {
 
     /**
      * Вывести в консоль список объектов для проверки:
-     * ul.forEach(o->System.out.println(o.getName()));
+     * ul.forEach(o -> System.out.println(o.getName()));
      */
     @Test
     public void testUserDaoCreateUser() {
@@ -272,7 +272,6 @@ class FilmorateApplicationDbImplTest {
                         .hasFieldOrPropertyWithValue("name", "Name film #1 qewrds"));
         assertEquals(1, pfl.size());
 
-        pfl.forEach(o->System.out.println(o.getName()));
         System.out.println();
 
         filmDao.addLike(3, 1);
