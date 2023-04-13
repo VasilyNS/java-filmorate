@@ -65,8 +65,8 @@ public class FilmDaoImpl implements FilmDao {
         Film checkFilm = getById(film.getId());
 
         String sql = "UPDATE film SET " +
-                     "name = ?, description = ?, release_date = ?, duration = ?, rating_id = ? " +
-                     "WHERE film_id = ?";
+                "name = ?, description = ?, release_date = ?, duration = ?, rating_id = ? " +
+                "WHERE film_id = ?";
         jdbcTemplate.update(sql,
                 film.getName(),
                 film.getDescription(),
@@ -125,10 +125,10 @@ public class FilmDaoImpl implements FilmDao {
      */
     public List<Film> findPopular(int count) {
         String sql = "SELECT f.*, COUNT(l.user_id) AS c FROM film AS f " +
-                     "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
-                     "GROUP BY f.film_id " +
-                     "ORDER BY c DESC " +
-                     "LIMIT ?";
+                "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
+                "GROUP BY f.film_id " +
+                "ORDER BY c DESC " +
+                "LIMIT ?";
         List<Film> popFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), count);
 
         log.info("List of popular films has been sent, limit=" + count);
@@ -146,7 +146,7 @@ public class FilmDaoImpl implements FilmDao {
     public List<Film> findByDirWithSort(int id, String sortBy) {
         if (sortBy.equals("year")) {
             String sql = "SELECT f.* FROM DIRECTOR AS d, FILM AS f WHERE d.DIR_ID = ? AND d.FILM_ID = f.FILM_ID  " +
-                         "ORDER BY f.RELEASE_DATE ";
+                    "ORDER BY f.RELEASE_DATE ";
             List<Film> sortFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), id);
 
             if (sortFilms.size() == 0) {
@@ -206,7 +206,9 @@ public class FilmDaoImpl implements FilmDao {
             return new ArrayList<>();
         }
 
-        return getDifferentFilmsBetweenUsers(userIdWithMaxCommonFilms.get(0), userId);
+        List<Film> recommendations = getDifferentFilmsBetweenUsers(userIdWithMaxCommonFilms.get(0), userId);
+        log.info("List of recommended films has been formed");
+        return recommendations;
     }
 
     /**
@@ -253,15 +255,15 @@ public class FilmDaoImpl implements FilmDao {
      * "genres": [{"id": 1, "name": "Комедия"}, {"id": 2, "name": "Драма"}, ...]
      */
     private Film makeFilm(ResultSet rs) throws SQLException {
-         Film film = new Film()
-                 .setId(rs.getInt("film_id"))
-                 .setName(rs.getString("name"))
-                 .setDescription(rs.getString("description"))
-                 .setReleaseDate(rs.getDate("release_date").toLocalDate())
-                 .setDuration(rs.getInt("duration"))
-                 .setMpa(mpaDao.getMpaById(rs.getInt("rating_id")))
-                 .setDirectors(directorDao.findAllDirectorBooksForFilm(rs.getInt("film_id")))
-                 .setGenres(genreDao.findAllGenresForFilm(rs.getInt("film_id")));
+        Film film = new Film()
+                .setId(rs.getInt("film_id"))
+                .setName(rs.getString("name"))
+                .setDescription(rs.getString("description"))
+                .setReleaseDate(rs.getDate("release_date").toLocalDate())
+                .setDuration(rs.getInt("duration"))
+                .setMpa(mpaDao.getMpaById(rs.getInt("rating_id")))
+                .setDirectors(directorDao.findAllDirectorBooksForFilm(rs.getInt("film_id")))
+                .setGenres(genreDao.findAllGenresForFilm(rs.getInt("film_id")));
 
         return film;
     }
