@@ -63,8 +63,8 @@ public class FilmDaoImpl implements FilmDao {
         Film checkFilm = getById(film.getId());
 
         String sql = "UPDATE film SET " +
-                     "name = ?, description = ?, release_date = ?, duration = ?, rating_id = ? " +
-                     "WHERE film_id = ?";
+                "name = ?, description = ?, release_date = ?, duration = ?, rating_id = ? " +
+                "WHERE film_id = ?";
         jdbcTemplate.update(sql,
                 film.getName(),
                 film.getDescription(),
@@ -121,22 +121,37 @@ public class FilmDaoImpl implements FilmDao {
      * столбцов вида "f.film_id", писать гигантскую конструкцию для всех столбцов
      * "SELECT f.film_id AS film_id, f.name AS name, .........…", не надо, хватает "SELECT f.*
      */
-    public List<Film> findPopular(int count) {
-        String sql = "SELECT f.*, COUNT(l.user_id) AS c FROM film AS f " +
-                     "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
-                     "GROUP BY f.film_id " +
-                     "ORDER BY c DESC " +
-                     "LIMIT ?";
-        List<Film> popFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), count);
+    public List<Film> findPopular(int count, int genreId, int year) {
+        List<Film> popFilms;
 
-        log.info("List of popular films has been sent, limit=" + count);
+        //если в запросе не передали жанр или год, то выводим все фильмы
+        if (genreId == 0 || year == 0) {
+            String sql = "SELECT f.*, COUNT(l.user_id) AS c FROM film AS f " +
+                    "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
+                    "GROUP BY f.film_id " +
+                    "ORDER BY c DESC " +
+                    "LIMIT ?";
+            popFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), count);
+        } else {
+            String sql = "SELECT f.*, COUNT(l.user_id) AS c FROM film AS f " +
+                    "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
+                    "LEFT JOIN genre AS g ON f.film_id = g.film_id " +
+                    "LEFT JOIN genre_book AS gb ON g.genre_id = gb.genre_id " +
+                    "WHERE g.genre_id = ? AND EXTRACT(YEAR FROM CAST(f.release_date AS date)) = ? " +
+                    "GROUP BY f.film_id, g.genre_id " +
+                    "ORDER BY c DESC " +
+                    "LIMIT ?";
+            popFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), genreId, year, count);
+        }
+        log.info("List of popular films has been sent, limit=" + count + ", genreId=" + genreId + ", year=" + year);
         return popFilms;
     }
+
 
     public List<Film> findByDirWithSort(int id, String sortBy) {
         if (sortBy.equals("year")) {
             String sql = "SELECT f.* FROM DIRECTOR AS d, FILM AS f WHERE d.DIR_ID = ? AND d.FILM_ID = f.FILM_ID  " +
-                         "ORDER BY f.RELEASE_DATE ";
+                    "ORDER BY f.RELEASE_DATE ";
             List<Film> sortFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), id);
 
             if (sortFilms.size() == 0) {
@@ -173,15 +188,15 @@ public class FilmDaoImpl implements FilmDao {
      * "genres": [{"id": 1, "name": "Комедия"}, {"id": 2, "name": "Драма"}, ...]
      */
     private Film makeFilm(ResultSet rs) throws SQLException {
-         Film film = new Film()
-                 .setId(rs.getInt("film_id"))
-                 .setName(rs.getString("name"))
-                 .setDescription(rs.getString("description"))
-                 .setReleaseDate(rs.getDate("release_date").toLocalDate())
-                 .setDuration(rs.getInt("duration"))
-                 .setMpa(mpaDao.getMpaById(rs.getInt("rating_id")))
-                 .setDirectors(directorDao.findAllDirectorBooksForFilm(rs.getInt("film_id")))
-                 .setGenres(genreDao.findAllGenresForFilm(rs.getInt("film_id")));
+        Film film = new Film()
+                .setId(rs.getInt("film_id"))
+                .setName(rs.getString("name"))
+                .setDescription(rs.getString("description"))
+                .setReleaseDate(rs.getDate("release_date").toLocalDate())
+                .setDuration(rs.getInt("duration"))
+                .setMpa(mpaDao.getMpaById(rs.getInt("rating_id")))
+                .setDirectors(directorDao.findAllDirectorBooksForFilm(rs.getInt("film_id")))
+                .setGenres(genreDao.findAllGenresForFilm(rs.getInt("film_id")));
 
         return film;
     }
