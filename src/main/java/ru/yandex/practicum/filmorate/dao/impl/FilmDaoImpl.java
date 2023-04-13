@@ -58,8 +58,7 @@ public class FilmDaoImpl implements FilmDao {
         }
     }
 
-    public Film updateFilm(Film film)
-    {
+    public Film updateFilm(Film film) {
         Validators.filmValidation(film);
         Film checkFilm = getById(film.getId());
 
@@ -135,7 +134,7 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     public List<Film> findByDirWithSort(int id, String sortBy) {
-        if (sortBy.equals("year")){
+        if (sortBy.equals("year")) {
             String sql = "SELECT f.* FROM DIRECTOR AS d, FILM AS f WHERE d.DIR_ID = ? AND d.FILM_ID = f.FILM_ID  " +
                          "ORDER BY f.RELEASE_DATE ";
             List<Film> sortFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), id);
@@ -148,7 +147,7 @@ public class FilmDaoImpl implements FilmDao {
             return sortFilms;
         }
 
-        if (sortBy.equals("likes")){
+        if (sortBy.equals("likes")) {
             String sql = "SELECT f.*, d.DIR_ID , COUNT(l.user_id) AS c FROM film AS f " +
                     "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
                     "LEFT JOIN director AS d ON f.film_id = d.film_id " +
@@ -181,8 +180,8 @@ public class FilmDaoImpl implements FilmDao {
                  .setReleaseDate(rs.getDate("release_date").toLocalDate())
                  .setDuration(rs.getInt("duration"))
                  .setMpa(mpaDao.getMpaById(rs.getInt("rating_id")))
-                 .setDirectors(directorDao.findAllDirectorBooksForFilm( rs.getInt("film_id") ))
-                 .setGenres(genreDao.findAllGenresForFilm( rs.getInt("film_id") ));
+                 .setDirectors(directorDao.findAllDirectorBooksForFilm(rs.getInt("film_id")))
+                 .setGenres(genreDao.findAllGenresForFilm(rs.getInt("film_id")));
 
         return film;
     }
