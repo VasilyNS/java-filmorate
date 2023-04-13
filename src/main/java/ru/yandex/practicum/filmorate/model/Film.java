@@ -29,6 +29,7 @@ public class Film {
 
     private Mpa mpa;
     private List<GenreBook> genres = new ArrayList<>();
+    private List<DirectorBook> directors = new ArrayList<>();
 
     public Map<String, Object> toMap() {
         Map<String, Object> values = new HashMap<>();

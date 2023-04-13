@@ -6,10 +6,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.dao.FilmDao;
-import ru.yandex.practicum.filmorate.dao.GenreDao;
-import ru.yandex.practicum.filmorate.dao.MpaDao;
-import ru.yandex.practicum.filmorate.dao.UserDao;
+import ru.yandex.practicum.filmorate.dao.*;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.validation.Validators;
@@ -27,6 +24,8 @@ public class FilmDaoImpl implements FilmDao {
     private final UserDao userDao;
     private final MpaDao mpaDao;
     private final GenreDao genreDao;
+    private final DirectorDao directorDao;
+
     private final JdbcTemplate jdbcTemplate;
 
     public Film createFilm(Film film) {
@@ -37,20 +36,14 @@ public class FilmDaoImpl implements FilmDao {
         int id = simpleJdbcInsert.executeAndReturnKey(film.toMap()).intValue();
         film.setId(id);
 
-        // Запись в объект имени рейтинга
-        int mpaId = film.getMpa().getId();
-        film.getMpa().setName(mpaDao.getMpaNameById(mpaId));
-
-        // Запись в объект имен жанров
-        for (GenreBook genre : film.getGenres()) {
-            genre.setName(genreDao.getGenreNameById(genre.getId()));
-        }
-
         // Запись жанров фильма в базу
         genreDao.addGenresToDbForFilm(id, film.getGenres());
+        // Запись режиссеров фильма в базу
+        directorDao.addDirectorsToDbForFilm(id, film.getDirectors());
 
         log.info("New film created with id=" + id);
-        return film;
+        Film filmUpd = getById(id);
+        return filmUpd;
     }
 
     public Film getById(int id) {
@@ -85,6 +78,10 @@ public class FilmDaoImpl implements FilmDao {
         // Обновляем жанры в БД
         genreDao.delAllGenresInDbForFilm(film.getId());
         genreDao.addGenresToDbForFilm(film.getId(), film.getGenres());
+
+        // Обновляем режиссеров в БД
+        directorDao.delAllDirectorsInDbForFilm(film.getId());
+        directorDao.addDirectorsToDbForFilm(film.getId(), film.getDirectors());
 
         // После возможного удаления неуникальных id жанров, что СУБД сделает автоматом на основе PK,
         // объект фильма надо просто перечитать из БД
@@ -137,6 +134,39 @@ public class FilmDaoImpl implements FilmDao {
         return popFilms;
     }
 
+    public List<Film> findByDirWithSort(int id, String sortBy) {
+        if (sortBy.equals("year")){
+            String sql = "SELECT f.* FROM DIRECTOR AS d, FILM AS f WHERE d.DIR_ID = ? AND d.FILM_ID = f.FILM_ID  " +
+                         "ORDER BY f.RELEASE_DATE ";
+            List<Film> sortFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), id);
+
+            if (sortFilms.size() == 0) {
+                throw new FilmNotFoundException(id);
+            }
+
+            log.info("List of films sorted by year has been sent, dir. id=" + id);
+            return sortFilms;
+        }
+
+        if (sortBy.equals("likes")){
+            String sql = "SELECT f.*, d.DIR_ID , COUNT(l.user_id) AS c FROM film AS f " +
+                    "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
+                    "LEFT JOIN director AS d ON f.film_id = d.film_id " +
+                    "WHERE d.DIR_ID = ? " +
+                    "GROUP BY f.film_id " +
+                    "ORDER BY c DESC";
+            List<Film> sortFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), id);
+
+            if (sortFilms.size() == 0) {
+                throw new FilmNotFoundException(id);
+            }
+
+            log.info("List of films sorted by likes has been sent, dir. id=" + id);
+            return sortFilms;
+        }
+        return null;
+    }
+
     /**
      * Создание из ResultSet сложного объекта - film, который включает подобъект:
      * "mpa": { "id": 3, "name": "PG-13" }
@@ -151,6 +181,7 @@ public class FilmDaoImpl implements FilmDao {
                  .setReleaseDate(rs.getDate("release_date").toLocalDate())
                  .setDuration(rs.getInt("duration"))
                  .setMpa(mpaDao.getMpaById(rs.getInt("rating_id")))
+                 .setDirectors(directorDao.findAllDirectorBooksForFilm( rs.getInt("film_id") ))
                  .setGenres(genreDao.findAllGenresForFilm( rs.getInt("film_id") ));
 
         return film;

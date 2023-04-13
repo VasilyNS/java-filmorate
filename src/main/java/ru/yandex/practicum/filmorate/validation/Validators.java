@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.validation;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.Constants;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.DirectorBook;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -60,6 +61,15 @@ public class Validators {
         LocalDate nd = LocalDate.now();
         if (nd.isBefore(user.getBirthday())) {
             throw new ValidationException("Date of birth cannot be in the future");
+        }
+    }
+
+    /**
+     * Проверка для режиссеров
+     */
+    static public void directorBookValidation(DirectorBook directorBook) {
+        if (directorBook.getName() == null || directorBook.getName().isBlank()) {
+            throw new ValidationException("Director's name cannot be blank or space");
         }
     }
 
