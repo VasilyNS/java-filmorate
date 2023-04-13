@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.dao.FilmDao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,4 +47,12 @@ public class FilmService {
         return filmDao.getRecommendations(id);
     }
 
+    public List<Film> search(String query, List<String> by) {
+        List<Film> films = new ArrayList<>();
+        List<Film> filmsByDir = filmDao.searchByDir(query);
+        List<Film> filmsByName = filmDao.searchByName(query);
+        films.addAll(filmsByDir);
+        films.addAll(filmsByName);
+        return films;
+    }
 }

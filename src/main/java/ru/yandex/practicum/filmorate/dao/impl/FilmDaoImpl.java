@@ -283,6 +283,22 @@ public class FilmDaoImpl implements FilmDao {
         return jdbcTemplate.query(sqlGetDifferentFilmsBetweenUsers, (rs, rowNum) -> makeFilm(rs), fromUserId, toUserId);
     }
 
+    public List<Film> searchByDir(String query) {
+        String sqlQuery = "SELECT * FROM film WHERE film.name LIKE '%" + query + "%'";
+        List<Film> allFilms = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs));
+
+        log.info("List of all films has been sent");
+        return allFilms;
+    }
+
+    public List<Film> searchByName(String query) {
+        String sqlQuery = "SELECT * FROM film WHERE film.name LIKE '%" + query + "%'";
+        List<Film> allFilms = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs));
+
+        log.info("List of all films has been sent");
+        return allFilms;
+    }
+
     /**
      * Создание из ResultSet сложного объекта - film, который включает подобъект:
      * "mpa": { "id": 3, "name": "PG-13" }
