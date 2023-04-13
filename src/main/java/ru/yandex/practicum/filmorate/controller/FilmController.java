@@ -16,7 +16,6 @@ public class FilmController {
     private final FilmDao filmDao;
     private final FilmService filmService;
 
-
     /**
      * Добавление фильма
      */
@@ -42,7 +41,7 @@ public class FilmController {
     }
 
     /**
-     * Получние списка всех фильмов
+     * Получение списка всех фильмов
      */
     @GetMapping("/films")
     public Collection<Film> getAll() {
