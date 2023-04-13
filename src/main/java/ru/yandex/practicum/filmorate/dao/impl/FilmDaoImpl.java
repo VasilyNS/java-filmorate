@@ -58,8 +58,7 @@ public class FilmDaoImpl implements FilmDao {
         }
     }
 
-    public Film updateFilm(Film film)
-    {
+    public Film updateFilm(Film film) {
         Validators.filmValidation(film);
         Film checkFilm = getById(film.getId());
 
