@@ -31,7 +31,6 @@ CREATE TABLE "FILM" (
     release_date date,
     rating_id int,
     duration int,
-    dir_id int,
     foreign key (rating_id) references RATING_BOOK(rating_id)
 );
 

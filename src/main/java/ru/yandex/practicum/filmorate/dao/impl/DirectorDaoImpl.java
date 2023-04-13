@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.validation.Validators;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -92,7 +93,9 @@ public class DirectorDaoImpl implements DirectorDao {
                 "LEFT JOIN director_book AS db ON d.dir_id = db.dir_id " +
                 "WHERE d.film_id = ?";
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> makeDirectorBook(rs), filmId);
+        List<DirectorBook> l = new ArrayList<>();
+        // l = jdbcTemplate.query(sql, (rs, rowNum) -> makeDirectorBook(rs), filmId);
+        return l;
     }
 
     public void delById(int id) {

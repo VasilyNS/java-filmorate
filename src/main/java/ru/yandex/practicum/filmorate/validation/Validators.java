@@ -19,7 +19,7 @@ public class Validators {
      * дата релиза — не раньше 28 декабря 1895 года (считается днём рождения кино.);
      * продолжительность фильма должна быть положительной.
      */
-    static public void filmValidation(Film film) {
+    public static void filmValidation(Film film) {
         if (film.getName() == null || film.getName().isBlank()) {
             throw new ValidationException("Name of the movie cannot be empty");
         }
@@ -44,7 +44,7 @@ public class Validators {
      * имя для отображения может быть пустым — в таком случае будет использован логин;
      * дата рождения не может быть в будущем.
      */
-    static public void userValidation(User user) {
+    public static void userValidation(User user) {
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             throw new ValidationException("Email cannot be blank and must contain the '@' symbol");
         }
@@ -67,7 +67,7 @@ public class Validators {
     /**
      * Проверка для режиссеров
      */
-    static public void directorBookValidation(DirectorBook directorBook) {
+    public static void directorBookValidation(DirectorBook directorBook) {
         if (directorBook.getName() == null || directorBook.getName().isBlank()) {
             throw new ValidationException("Director's name cannot be blank or space");
         }

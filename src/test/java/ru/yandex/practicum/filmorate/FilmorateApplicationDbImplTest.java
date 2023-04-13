@@ -9,10 +9,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import ru.yandex.practicum.filmorate.dao.*;
-import ru.yandex.practicum.filmorate.dao.impl.FilmDaoImpl;
-import ru.yandex.practicum.filmorate.dao.impl.GenreDaoImpl;
-import ru.yandex.practicum.filmorate.dao.impl.MpaDaoImpl;
-import ru.yandex.practicum.filmorate.dao.impl.UserDaoImpl;
+import ru.yandex.practicum.filmorate.dao.impl.*;
 import ru.yandex.practicum.filmorate.model.*;
 
 import java.time.LocalDate;
@@ -58,6 +55,7 @@ class FilmorateApplicationDbImplTest {
         userDao = new UserDaoImpl(jdbcTemplate);
         genreDao = new GenreDaoImpl(jdbcTemplate);
         mpaDao = new MpaDaoImpl(jdbcTemplate);
+        directorDao = new DirectorDaoImpl(jdbcTemplate);
         filmDao = new FilmDaoImpl(userDao, mpaDao, genreDao, directorDao, jdbcTemplate);
 
         testuser = new User(333, "test@E.RU", "testL", "testN",
