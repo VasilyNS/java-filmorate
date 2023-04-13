@@ -118,11 +118,11 @@ public class ReviewDaoImpl implements ReviewDao {
 
     @Override
     public Review findById(int reviewId) {
-        SqlRowSet reviewRows = jdbcTemplate.queryForRowSet
-                ("select rb.review_id, rb.content, rb.is_positive, ufr.film_id, ufr.user_id \n" +
-                        "from REVIEW_BOOK as rb\n" +
-                        "left outer join USER_FILM_REVIEW as ufr on rb.review_id = ufr.review_id \n" +
-                        "where rb.review_id = ?", reviewId);
+        SqlRowSet reviewRows = jdbcTemplate.queryForRowSet("select rb.review_id, rb.content, rb.is_positive, " +
+                "ufr.film_id, ufr.user_id \n" +
+                "from REVIEW_BOOK as rb\n" +
+                "left outer join USER_FILM_REVIEW as ufr on rb.review_id = ufr.review_id \n" +
+                "where rb.review_id = ?", reviewId);
 
         if (reviewRows.next()) {
             return Review.builder()
