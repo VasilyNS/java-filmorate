@@ -24,4 +24,6 @@ public interface FilmDao {
 
     List<Film> findPopular(int count);
 
+    List<Film> findByDirWithSort(int id, String sortBy);
+
 }

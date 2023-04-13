@@ -4,6 +4,10 @@
 --DELETE FROM FILM;
 --DELETE FROM USERS;
 -------------------------------------------------------------------------------
+INSERT INTO DIRECTOR_BOOK (name) VALUES ('Режиссер номер 001');
+INSERT INTO DIRECTOR_BOOK (name) VALUES ('Режиссер номер 202');
+INSERT INTO DIRECTOR_BOOK (name) VALUES ('Режиссер номер 303');
+-------------------------------------------------------------------------------
 INSERT INTO film (name, description, release_date, rating_id, duration)
 VALUES ('Name film #1 qewrds', 'Desc film #1', '2015-12-21', 1, 121);
 
@@ -15,6 +19,10 @@ VALUES ('Name film #3 xfdrvt', 'Desc film #3', '2015-12-23', 2, 123);
 
 INSERT INTO film (name, description, release_date, rating_id, duration)
 VALUES ('Name film #4 gfgrtt', 'Desc film #4', '2015-12-24', 4, 124);
+-------------------------------------------------------------------------------
+INSERT INTO DIRECTOR (film_id, dir_id) VALUES (1, 1);
+INSERT INTO DIRECTOR (film_id, dir_id) VALUES (2, 1);
+INSERT INTO DIRECTOR (film_id, dir_id) VALUES (4, 1);
 -------------------------------------------------------------------------------
 INSERT INTO users (email, login, name, birthday)
 VALUES ('User1@mail.ru', 'user1login', 'user1name', '2000-11-21');

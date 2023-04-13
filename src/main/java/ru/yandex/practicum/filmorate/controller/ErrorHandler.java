@@ -41,13 +41,21 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND) // 404
-    public ErrorResponse handleMpaNotFoundException(final MpaNotFoundException e) {
+    public ErrorResponse handleDirectorNotFoundException(final DirectorNotFoundException e) {
         log.warn(e.getMessage());
         return new ErrorResponse(
                 e.getMessage()
         );
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND) // 404
+    public ErrorResponse handleMpaNotFoundException(final MpaNotFoundException e) {
+        log.warn(e.getMessage());
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND) // 404
