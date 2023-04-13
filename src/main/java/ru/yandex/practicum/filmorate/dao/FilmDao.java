@@ -24,6 +24,8 @@ public interface FilmDao {
 
     List<Film> findPopular(int count);
 
+    List<Film> findByDirWithSort(int id, String sortBy);
+
     void deleteFilm(int id);
 
     List<Film> getCommonFilms(int userId, int friendId);
