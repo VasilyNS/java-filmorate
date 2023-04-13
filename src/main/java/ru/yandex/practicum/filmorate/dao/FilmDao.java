@@ -26,4 +26,6 @@ public interface FilmDao {
 
     List<Film> findByDirWithSort(int id, String sortBy);
 
+    void deleteFilm(int id);
+
 }

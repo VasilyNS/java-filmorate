@@ -133,6 +133,14 @@ public class FilmDaoImpl implements FilmDao {
         return popFilms;
     }
 
+    public void deleteFilm(int id) {
+        String sqlQuery = "DELETE FROM film WHERE film_id = ?";
+
+        jdbcTemplate.update(sqlQuery, id);
+
+        log.info("Film id: " + id + " deleted");
+    }
+
     public List<Film> findByDirWithSort(int id, String sortBy) {
         if (sortBy.equals("year")) {
             String sql = "SELECT f.* FROM DIRECTOR AS d, FILM AS f WHERE d.DIR_ID = ? AND d.FILM_ID = f.FILM_ID  " +

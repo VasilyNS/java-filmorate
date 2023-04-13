@@ -26,4 +26,6 @@ public interface UserDao {
 
     void deleteFromFriends(int id1, int id2);
 
+    void deleteUser(int id);
+
 }

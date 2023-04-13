@@ -80,4 +80,11 @@ public class UserController {
         userService.deleteFromFriends(id, friendId);
     }
 
+    /**
+     * Удаление пользователя
+     */
+    @DeleteMapping("/users/{userId}")
+    public void deleteUser(@PathVariable int userId) {
+        userService.deleteUser(userId);
+    }
 }

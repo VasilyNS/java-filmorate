@@ -131,6 +131,14 @@ public class UserDaoImpl implements UserDao {
         log.info("User with id1=" + id1 + " has been removed from friends of user with id2=" + id2);
     }
 
+    public void deleteUser(int id) {
+        String sqlQuery = "DELETE FROM users WHERE user_id = ?";
+
+        jdbcTemplate.update(sqlQuery, id);
+
+        log.info("User id: " + id + " deleted");
+    }
+
     private User makeUser(ResultSet rs) throws SQLException {
         return new User(
                 rs.getInt("user_id"),
