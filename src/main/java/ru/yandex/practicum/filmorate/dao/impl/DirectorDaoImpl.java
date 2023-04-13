@@ -21,7 +21,7 @@ public class DirectorDaoImpl implements DirectorDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public List<DirectorBook> findAllDirectors(){
+    public List<DirectorBook> findAllDirectors() {
         String sql = "SELECT * FROM director_book";
 
         log.info("List of all Directors has been sent");
@@ -40,7 +40,7 @@ public class DirectorDaoImpl implements DirectorDao {
         }
     }
 
-    public DirectorBook createDirector(DirectorBook directorBook){
+    public DirectorBook createDirector(DirectorBook directorBook) {
         Validators.directorBookValidation(directorBook);
 
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
@@ -59,7 +59,7 @@ public class DirectorDaoImpl implements DirectorDao {
         jdbcTemplate.update(sql, filmId);
     }
 
-    public DirectorBook updateDirector(DirectorBook directorBook){
+    public DirectorBook updateDirector(DirectorBook directorBook) {
         Validators.directorBookValidation(directorBook);
         DirectorBook checkDirectorBook = getDirectorById(directorBook.getId());
 
@@ -77,7 +77,7 @@ public class DirectorDaoImpl implements DirectorDao {
 
     public void addDirectorsToDbForFilm(int filmId, List<DirectorBook> directorBooks) {
         for (DirectorBook dBook : directorBooks) {
-            try{
+            try {
                 String sql = "INSERT INTO director(film_id, dir_id) VALUES (?, ?)";
                 jdbcTemplate.update(sql, filmId, dBook.getId());
             } catch (Exception e) {
@@ -87,7 +87,7 @@ public class DirectorDaoImpl implements DirectorDao {
         }
     }
 
-    public List<DirectorBook> findAllDirectorBooksForFilm(int filmId){
+    public List<DirectorBook> findAllDirectorBooksForFilm(int filmId) {
         String sql = "SELECT d.dir_id AS dir_id, db.name AS name FROM director AS d " +
                 "LEFT JOIN director_book AS db ON d.dir_id = db.dir_id " +
                 "WHERE d.film_id = ?";
@@ -95,7 +95,7 @@ public class DirectorDaoImpl implements DirectorDao {
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeDirectorBook(rs), filmId);
     }
 
-    public void delById(int id){
+    public void delById(int id) {
         String sql = "DELETE FROM director WHERE dir_id = ?";
         jdbcTemplate.update(sql, id);
 
