@@ -8,14 +8,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import ru.yandex.practicum.filmorate.dao.FilmDao;
-import ru.yandex.practicum.filmorate.dao.GenreDao;
-import ru.yandex.practicum.filmorate.dao.MpaDao;
-import ru.yandex.practicum.filmorate.dao.UserDao;
-import ru.yandex.practicum.filmorate.dao.impl.FilmDaoImpl;
-import ru.yandex.practicum.filmorate.dao.impl.GenreDaoImpl;
-import ru.yandex.practicum.filmorate.dao.impl.MpaDaoImpl;
-import ru.yandex.practicum.filmorate.dao.impl.UserDaoImpl;
+import ru.yandex.practicum.filmorate.dao.*;
+import ru.yandex.practicum.filmorate.dao.impl.*;
 import ru.yandex.practicum.filmorate.model.*;
 
 import java.time.LocalDate;
@@ -44,6 +38,7 @@ class FilmorateApplicationDbImplTest {
     private FilmDao filmDao;
     private GenreDao genreDao;
     private MpaDao mpaDao;
+    private DirectorDao directorDao;
 
     private User testuser;
     private Film testfilm;
@@ -60,12 +55,13 @@ class FilmorateApplicationDbImplTest {
         userDao = new UserDaoImpl(jdbcTemplate);
         genreDao = new GenreDaoImpl(jdbcTemplate);
         mpaDao = new MpaDaoImpl(jdbcTemplate);
-        filmDao = new FilmDaoImpl(userDao, mpaDao, genreDao, jdbcTemplate);
+        directorDao = new DirectorDaoImpl(jdbcTemplate);
+        filmDao = new FilmDaoImpl(userDao, mpaDao, genreDao, directorDao, jdbcTemplate);
 
         testuser = new User(333, "test@E.RU", "testL", "testN",
                 LocalDate.of(2001, 12, 25));
         testfilm = new Film(333, "testN", "testD", LocalDate.of(2001, 12, 25),
-                177, new Mpa(1, ""), new ArrayList<GenreBook>());
+                177, new Mpa(1, ""), new ArrayList<GenreBook>(), new ArrayList<DirectorBook>());
 
     }
 
@@ -76,7 +72,7 @@ class FilmorateApplicationDbImplTest {
 
     /**
      * Вывести в консоль список объектов для проверки:
-     * ul.forEach(o->System.out.println(o.getName()));
+     * ul.forEach(o -> System.out.println(o.getName()));
      */
     @Test
     public void testUserDaoCreateUser() {
@@ -276,7 +272,6 @@ class FilmorateApplicationDbImplTest {
                         .hasFieldOrPropertyWithValue("name", "Name film #1 qewrds"));
         assertEquals(1, pfl.size());
 
-        pfl.forEach(o->System.out.println(o.getName()));
         System.out.println();
 
         filmDao.addLike(3, 1);

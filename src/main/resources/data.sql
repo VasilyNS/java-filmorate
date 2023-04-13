@@ -10,3 +10,5 @@ INSERT INTO GENRE_BOOK (name) VALUES ('Мультфильм');
 INSERT INTO GENRE_BOOK (name) VALUES ('Триллер');
 INSERT INTO GENRE_BOOK (name) VALUES ('Документальный');
 INSERT INTO GENRE_BOOK (name) VALUES ('Боевик');
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
