@@ -50,7 +50,6 @@ public class FilmController {
 
     /**
      * Пользователь ставит лайк фильму
-     *
      */
     @PutMapping("/films/{id}/like/{userId}")
     public void addLike(@PathVariable int id, @PathVariable int userId) {
@@ -66,12 +65,15 @@ public class FilmController {
     }
 
     /**
-     * Возвращает список из первых count фильмов по количеству лайков.
+     * Возвращает список самых популярных фильмов указанного жанра за нужный год.
+     * Если жанр или год не указаны, то выводит список из первых count фильмов по количеству лайков.
      * Если значение параметра count не задано, то count = 10.
      */
     @GetMapping("/films/popular")
-    public List<Film> getPopular(@RequestParam(defaultValue = "10", required = false) Integer count) {
-        return filmService.findPopular(count);
+    public List<Film> getPopular(@RequestParam(defaultValue = "10", required = false) Integer count,
+                                 @RequestParam(defaultValue = "0", required = false) Integer genreId,
+                                 @RequestParam(defaultValue = "0", required = false) Integer year) {
+        return filmService.findPopular(count, genreId, year);
     }
 
     /**
@@ -89,4 +91,5 @@ public class FilmController {
     public List<Film> getCommonFilms(@RequestParam int userId, @RequestParam int friendId) {
         return filmService.getCommonFilms(userId, friendId);
     }
+
 }

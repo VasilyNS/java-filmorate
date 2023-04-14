@@ -30,8 +30,8 @@ public class FilmService {
         filmDao.delLike(id, userId);
     }
 
-    public List<Film> findPopular(int count) {
-        return filmDao.findPopular(count);
+    public List<Film> findPopular(int count, int genreId, int year) {
+        return filmDao.findPopular(count, genreId, year);
     }
 
     public void deleteFilm(int id) {

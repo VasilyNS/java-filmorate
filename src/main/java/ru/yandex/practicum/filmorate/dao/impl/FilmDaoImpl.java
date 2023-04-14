@@ -123,15 +123,50 @@ public class FilmDaoImpl implements FilmDao {
      * столбцов вида "f.film_id", писать гигантскую конструкцию для всех столбцов
      * "SELECT f.film_id AS film_id, f.name AS name, .........…", не надо, хватает "SELECT f.*
      */
-    public List<Film> findPopular(int count) {
-        String sql = "SELECT f.*, COUNT(l.user_id) AS c FROM film AS f " +
-                "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
-                "GROUP BY f.film_id " +
-                "ORDER BY c DESC " +
-                "LIMIT ?";
-        List<Film> popFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), count);
+    public List<Film> findPopular(int count, int genreId, int year) {
+        List<Film> popFilms;
 
-        log.info("List of popular films has been sent, limit=" + count);
+        //если в запросе не передали жанр и год, то выводим все фильмы
+        if (genreId == 0 && year == 0) {
+            String sql = "SELECT f.*, COUNT(l.user_id) AS c FROM film AS f " +
+                    "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
+                    "GROUP BY f.film_id " +
+                    "ORDER BY c DESC " +
+                    "LIMIT ?";
+            popFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), count);
+        } else if (genreId == 0) { //если жанр не указан, то выводим по году
+            String sql = "SELECT f.*, COUNT(l.user_id) AS c FROM film AS f " +
+                    "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
+                    "LEFT JOIN genre AS g ON f.film_id = g.film_id " +
+                    "LEFT JOIN genre_book AS gb ON g.genre_id = gb.genre_id " +
+                    "WHERE EXTRACT(YEAR FROM CAST(f.release_date AS date)) = ? " +
+                    "GROUP BY f.film_id " +
+                    "ORDER BY c DESC " +
+                    "LIMIT ?";
+            popFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), year, count);
+        } else if (year == 0) { //если год не указан, то выводим по жанру
+            String sql = "SELECT f.*, COUNT(l.user_id) AS c FROM film AS f " +
+                    "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
+                    "LEFT JOIN genre AS g ON f.film_id = g.film_id " +
+                    "LEFT JOIN genre_book AS gb ON g.genre_id = gb.genre_id " +
+                    "WHERE g.genre_id = ? " +
+                    "GROUP BY f.film_id, g.genre_id " +
+                    "ORDER BY c DESC " +
+                    "LIMIT ?";
+            popFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), genreId, count);
+        } else {
+            String sql = "SELECT f.*, COUNT(l.user_id) AS c FROM film AS f " +
+                    "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
+                    "LEFT JOIN genre AS g ON f.film_id = g.film_id " +
+                    "LEFT JOIN genre_book AS gb ON g.genre_id = gb.genre_id " +
+                    "WHERE g.genre_id = ? AND EXTRACT(YEAR FROM CAST(f.release_date AS date)) = ? " +
+                    "GROUP BY f.film_id, g.genre_id " +
+                    "ORDER BY c DESC " +
+                    "LIMIT ?";
+            popFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), genreId, year, count);
+        }
+
+        log.info("List of popular films has been sent, limit=" + count + ", genreId=" + genreId + ", year=" + year);
         return popFilms;
     }
 
@@ -178,14 +213,14 @@ public class FilmDaoImpl implements FilmDao {
 
     public List<Film> getCommonFilms(int userId, int friendId) {
         String sqlQuery = "SELECT f.*, r.rate " +
-                        "FROM LIKES l " +
-                        "JOIN LIKES l2 ON l2.FILM_ID = l.FILM_ID " +
-                        "JOIN FILM f ON l.FILM_ID = f.FILM_ID " +
-                        "JOIN (SELECT l3.FILM_ID, COUNT(USER_ID) AS rate " +
-                                "FROM LIKES l3 " +
-                                "GROUP BY l3.FILM_ID) AS r ON r.film_id = l.FILM_ID " +
-                        "WHERE l.USER_ID = ? AND l2.USER_ID = ? " +
-                        "ORDER BY r.rate DESC";
+                "FROM LIKES l " +
+                "JOIN LIKES l2 ON l2.FILM_ID = l.FILM_ID " +
+                "JOIN FILM f ON l.FILM_ID = f.FILM_ID " +
+                "JOIN (SELECT l3.FILM_ID, COUNT(USER_ID) AS rate " +
+                "FROM LIKES l3 " +
+                "GROUP BY l3.FILM_ID) AS r ON r.film_id = l.FILM_ID " +
+                "WHERE l.USER_ID = ? AND l2.USER_ID = ? " +
+                "ORDER BY r.rate DESC";
 
         List<Film> commonFilms = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs), userId, friendId);
 

@@ -22,7 +22,7 @@ public interface FilmDao {
 
     void delLike(int id, int userId);
 
-    List<Film> findPopular(int count);
+    List<Film> findPopular(int count, int genreId, int year);
 
     List<Film> findByDirWithSort(int id, String sortBy);
 
