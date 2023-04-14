@@ -145,7 +145,7 @@ public class FilmDaoImpl implements FilmDao {
                     "LIMIT ?";
             popFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), genreId, year, count);
         }
-        
+
         log.info("List of popular films has been sent, limit=" + count + ", genreId=" + genreId + ", year=" + year);
         return popFilms;
     }
