@@ -2,9 +2,14 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.EventDao;
+import ru.yandex.practicum.filmorate.enums.FeedEventType;
+import ru.yandex.practicum.filmorate.enums.FeedOperation;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.dao.FilmDao;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +26,7 @@ import static ru.yandex.practicum.filmorate.Constants.SEARCH_FILM_BY_NAME;
 public class FilmService {
 
     private final FilmDao filmDao;
+    private final EventDao eventDao;
 
     public Film getById(int id) {
         return filmDao.getById(id);
@@ -28,10 +34,30 @@ public class FilmService {
 
     public void addLike(int id, int userId) {
         filmDao.addLike(id, userId);
+
+        Event event = new Event(
+                Instant.now().toEpochMilli(),
+                userId,
+                FeedEventType.LIKE,
+                FeedOperation.ADD,
+                id
+        );
+
+        eventDao.createFeed(event);
     }
 
     public void delLike(int id, int userId) {
         filmDao.delLike(id, userId);
+
+        Event event = new Event(
+                Instant.now().toEpochMilli(),
+                userId,
+                FeedEventType.LIKE,
+                FeedOperation.REMOVE,
+                id
+        );
+
+        eventDao.createFeed(event);
     }
 
     public List<Film> findPopular(int count, int genreId, int year) {
