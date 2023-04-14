@@ -19,7 +19,7 @@ public class GenreDaoImpl implements GenreDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public List<GenreBook> findAllGenreBook(){
+    public List<GenreBook> findAllGenreBook() {
         String sql = "SELECT * FROM genre_book";
         log.info("List of all Genres has been sent");
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeGenreBook(rs));
@@ -43,7 +43,7 @@ public class GenreDaoImpl implements GenreDao {
 
     public void addGenresToDbForFilm(int filmId, List<GenreBook> genres) {
         for (GenreBook genre : genres) {
-            try{
+            try {
                 String sql = "INSERT INTO genre(film_id, genre_id) VALUES (?, ?)";
                 jdbcTemplate.update(sql, filmId, genre.getId());
             } catch (Exception e) {
@@ -58,10 +58,10 @@ public class GenreDaoImpl implements GenreDao {
         jdbcTemplate.update(sql, filmId);
     }
 
-    public List<GenreBook> findAllGenresForFilm(int filmId){
+    public List<GenreBook> findAllGenresForFilm(int filmId) {
         String sql = "SELECT g.genre_id AS genre_id, gb.name AS name FROM genre AS g " +
-                     "LEFT JOIN genre_book AS gb ON g.genre_id = gb.genre_id " +
-                     "WHERE g.film_id = ?";
+                "LEFT JOIN genre_book AS gb ON g.genre_id = gb.genre_id " +
+                "WHERE g.film_id = ?";
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeGenreBook(rs), filmId);
     }
 

@@ -19,7 +19,7 @@ public class MpaDaoImpl implements MpaDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public List<Mpa> findAllMpa(){
+    public List<Mpa> findAllMpa() {
         String sql = "SELECT * FROM rating_book";
         List<Mpa> allMpa = jdbcTemplate.query(sql, (rs, rowNum) -> makeMpa(rs));
 

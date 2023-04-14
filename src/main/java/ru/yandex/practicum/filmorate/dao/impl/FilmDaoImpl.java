@@ -102,11 +102,16 @@ public class FilmDaoImpl implements FilmDao {
         Film checkFilm = getById(id);
         User checkUser = userDao.getById(userId);
 
-        String sql = "INSERT INTO likes(film_id, user_id) VALUES (?, ?)";
-        jdbcTemplate.update(sql, id, userId);
+        try {
+            String sql = "INSERT INTO likes(film_id, user_id) VALUES (?, ?)";
+            jdbcTemplate.update(sql, id, userId);
+        } catch (Exception e) {
+            log.warn("Error on write to DB: " + e.getMessage());
+        }
 
         log.info("Like for film id=" + id + " form user with id=" + userId);
     }
+
 
     public void delLike(int id, int userId) {
         Film checkFilm = getById(id);

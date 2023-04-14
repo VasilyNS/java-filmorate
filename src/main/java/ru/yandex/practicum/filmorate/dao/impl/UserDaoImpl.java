@@ -56,8 +56,8 @@ public class UserDaoImpl implements UserDao {
         User checkUser = getById(user.getId());
 
         String sql = "UPDATE users SET " +
-                     "email = ?, login = ?, name = ?, birthday = ? " +
-                     "WHERE user_id = ?";
+                "email = ?, login = ?, name = ?, birthday = ? " +
+                "WHERE user_id = ?";
         jdbcTemplate.update(sql,
                 user.getEmail(),
                 user.getLogin(),
@@ -109,8 +109,8 @@ public class UserDaoImpl implements UserDao {
 
         List<User> usersCommonFriends = new ArrayList<>();
         String sql = "(SELECT user_id_2 FROM friend WHERE user_id_1 = ?)" +
-                     "INTERSECT" +
-                     "(SELECT user_id_2 FROM friend WHERE user_id_1 = ?)";
+                "INTERSECT" +
+                "(SELECT user_id_2 FROM friend WHERE user_id_1 = ?)";
         List<Friend> friends = jdbcTemplate.query(sql, (rs, rowNum) -> makeFriend(rs), id1, id2);
 
         for (Friend friend : friends) {
