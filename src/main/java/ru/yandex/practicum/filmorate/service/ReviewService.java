@@ -29,10 +29,10 @@ public class ReviewService {
 
         Event event = new Event(
                 Instant.now().toEpochMilli(),
-                review.getUserId(),
+                addedReview.getUserId(),
                 FeedEventType.REVIEW,
                 FeedOperation.ADD,
-                review.getFilmId()
+                addedReview.getFilmId()
         );
 
         eventDao.createFeed(event);
@@ -45,10 +45,10 @@ public class ReviewService {
 
         Event event = new Event(
                 Instant.now().toEpochMilli(),
-                review.getUserId(),
+                updatedReview.getUserId(),
                 FeedEventType.REVIEW,
                 FeedOperation.UPDATE,
-                review.getFilmId()
+                updatedReview.getFilmId()
         );
 
         eventDao.createFeed(event);
@@ -63,7 +63,7 @@ public class ReviewService {
                 Instant.now().toEpochMilli(),
                 review.getUserId(),
                 FeedEventType.REVIEW,
-                FeedOperation.ADD,
+                FeedOperation.REMOVE,
                 review.getFilmId()
         );
 
