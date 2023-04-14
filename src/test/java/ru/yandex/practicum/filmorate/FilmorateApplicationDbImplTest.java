@@ -265,7 +265,7 @@ class FilmorateApplicationDbImplTest {
         List<Film> fl = filmDao.findAllFilms();
         assertEquals(4, fl.size());
 
-        List<Film> pfl = filmDao.findPopular(1);
+        List<Film> pfl = filmDao.findPopular(1, 0, 0);
         Optional<Film> f = Optional.of(pfl.get(0));
         assertThat(f).isPresent()
                 .hasValueSatisfying(o -> assertThat(o)
@@ -280,7 +280,7 @@ class FilmorateApplicationDbImplTest {
         filmDao.addLike(3, 4);
         filmDao.addLike(3, 5);
 
-        pfl = filmDao.findPopular(1000);
+        pfl = filmDao.findPopular(1000, 0, 0);
         f = Optional.of(pfl.get(0));
         assertThat(f).isPresent()
                 .hasValueSatisfying(o -> assertThat(o)
@@ -292,7 +292,7 @@ class FilmorateApplicationDbImplTest {
         List<Film> fl = filmDao.findAllFilms();
         assertEquals(4, fl.size());
 
-        List<Film> pfl = filmDao.findPopular(1000);
+        List<Film> pfl = filmDao.findPopular(1000, 0, 0);
         Optional<Film> f = Optional.of(pfl.get(0));
         assertThat(f).isPresent()
                 .hasValueSatisfying(o -> assertThat(o)
@@ -303,7 +303,7 @@ class FilmorateApplicationDbImplTest {
         filmDao.delLike(1,3);
         filmDao.delLike(1,4);
 
-        pfl = filmDao.findPopular(1000);
+        pfl = filmDao.findPopular(1000, 0, 0);
 
         f = Optional.of(pfl.get(0));
         assertThat(f).isPresent()
@@ -316,7 +316,7 @@ class FilmorateApplicationDbImplTest {
         List<Film> fl = filmDao.findAllFilms();
         assertEquals(4, fl.size());
 
-        List<Film> pfl = filmDao.findPopular(1);
+        List<Film> pfl = filmDao.findPopular(1, 0, 0);
         assertEquals(1, pfl.size());
 
         Optional<Film> f = Optional.of(pfl.get(0));

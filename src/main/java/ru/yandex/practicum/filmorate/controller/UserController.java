@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.dao.UserDao;
 
@@ -16,6 +18,7 @@ import java.util.List;
 public class UserController {
     private final UserDao userDao;
     private final UserService userService;
+    private final FilmService filmService;
 
     /**
      * Добавление пользователя
@@ -88,6 +91,15 @@ public class UserController {
     public void deleteUser(@PathVariable int userId) {
         userService.deleteUser(userId);
     }
+
+    /**
+     * получение рекомендаций фильмов для пользователя
+     */
+    @GetMapping("/users/{id}/recommendations")
+    public List<Film> getRecommendations(@PathVariable int id) {
+        return filmService.getRecommendations(id);
+    }
+
 
     /**
      * Получение ленты событий пользователя
