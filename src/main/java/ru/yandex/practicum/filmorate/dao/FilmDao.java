@@ -26,4 +26,10 @@ public interface FilmDao {
 
     List<Film> findByDirWithSort(int id, String sortBy);
 
+    void deleteFilm(int id);
+
+    List<Film> getCommonFilms(int userId, int friendId);
+
+    List<Film> getRecommendations(int userId);
+
 }

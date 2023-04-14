@@ -2,9 +2,9 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.dao.FilmDao;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.dao.FilmDao;
 
 import java.util.Collection;
 import java.util.List;
@@ -76,5 +76,20 @@ public class FilmController {
         return filmService.findPopular(count, genreId, year);
     }
 
+    /**
+     * Удаление фильма
+     */
+    @DeleteMapping("/films/{filmId}")
+    public void deleteFilm(@PathVariable int filmId) {
+        filmService.deleteFilm(filmId);
+    }
+
+    /**
+     * Вывод общих фильмов с другим пользователем
+     */
+    @GetMapping("/films/common")
+    public List<Film> getCommonFilms(@RequestParam int userId, @RequestParam int friendId) {
+        return filmService.getCommonFilms(userId, friendId);
+    }
 
 }

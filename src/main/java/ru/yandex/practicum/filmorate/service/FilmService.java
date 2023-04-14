@@ -34,4 +34,16 @@ public class FilmService {
         return filmDao.findPopular(count, genreId, year);
     }
 
+    public void deleteFilm(int id) {
+        filmDao.deleteFilm(id);
+    }
+
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        return filmDao.getCommonFilms(userId, friendId);
+    }
+
+    public List<Film> getRecommendations(int id) {
+        return filmDao.getRecommendations(id);
+    }
+
 }
