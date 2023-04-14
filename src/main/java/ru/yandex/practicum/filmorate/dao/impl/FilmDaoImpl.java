@@ -284,6 +284,32 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     /**
+     * Поиск фильмов по части названия фильма
+     */
+    public List<Film> searchByName(String query) {
+        String sqlQuery = "SELECT f.* FROM film AS f " +
+                "WHERE LOWER(f.name) LIKE '%" + query.toLowerCase() + "%'";
+        List<Film> films = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs));
+
+        log.info("Sent a list of all movies found by name");
+        return films;
+    }
+
+    /**
+     * Поиск фильмов по части имени режиссера
+     */
+    public List<Film> searchByDir(String query) {
+        String sqlQuery = "SELECT f.* FROM film AS f " +
+                "JOIN director AS d ON f.film_id = d.film_id " +
+                "JOIN director_book AS db ON d.dir_id = db.dir_id " +
+                "WHERE LOWER(db.name) LIKE '%" + query.toLowerCase() + "%'";
+        List<Film> films = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs));
+
+        log.info("Sent a list of all movies found by name of director");
+        return films;
+    }
+
+    /**
      * Создание из ResultSet сложного объекта - film, который включает подобъект:
      * "mpa": { "id": 3, "name": "PG-13" }
      * и список объектов:

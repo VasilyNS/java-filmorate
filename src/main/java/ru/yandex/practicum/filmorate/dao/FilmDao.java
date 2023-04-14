@@ -32,4 +32,7 @@ public interface FilmDao {
 
     List<Film> getRecommendations(int userId);
 
+    List<Film> searchByDir(String query);
+
+    List<Film> searchByName(String query);
 }
