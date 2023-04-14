@@ -42,4 +42,8 @@ public class FilmService {
         return filmDao.getCommonFilms(userId, friendId);
     }
 
+    public List<Film> getRecommendations(int id) {
+        return filmDao.getRecommendations(id);
+    }
+
 }

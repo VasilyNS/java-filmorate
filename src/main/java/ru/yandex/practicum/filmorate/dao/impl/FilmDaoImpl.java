@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.validation.Validators;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Primary
@@ -64,8 +65,8 @@ public class FilmDaoImpl implements FilmDao {
         Film checkFilm = getById(film.getId());
 
         String sql = "UPDATE film SET " +
-                     "name = ?, description = ?, release_date = ?, duration = ?, rating_id = ? " +
-                     "WHERE film_id = ?";
+                "name = ?, description = ?, release_date = ?, duration = ?, rating_id = ? " +
+                "WHERE film_id = ?";
         jdbcTemplate.update(sql,
                 film.getName(),
                 film.getDescription(),
@@ -124,10 +125,10 @@ public class FilmDaoImpl implements FilmDao {
      */
     public List<Film> findPopular(int count) {
         String sql = "SELECT f.*, COUNT(l.user_id) AS c FROM film AS f " +
-                     "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
-                     "GROUP BY f.film_id " +
-                     "ORDER BY c DESC " +
-                     "LIMIT ?";
+                "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
+                "GROUP BY f.film_id " +
+                "ORDER BY c DESC " +
+                "LIMIT ?";
         List<Film> popFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), count);
 
         log.info("List of popular films has been sent, limit=" + count);
@@ -145,7 +146,7 @@ public class FilmDaoImpl implements FilmDao {
     public List<Film> findByDirWithSort(int id, String sortBy) {
         if (sortBy.equals("year")) {
             String sql = "SELECT f.* FROM DIRECTOR AS d, FILM AS f WHERE d.DIR_ID = ? AND d.FILM_ID = f.FILM_ID  " +
-                         "ORDER BY f.RELEASE_DATE ";
+                    "ORDER BY f.RELEASE_DATE ";
             List<Film> sortFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), id);
 
             if (sortFilms.size() == 0) {
@@ -193,21 +194,76 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     /**
+     * Поиск пользователя с максимальным числом фильмов,
+     * которые также есть у пользователя, для которого составляются рекомендации.
+     * Далее поиск и возвращения фильмов, которые есть у этого пользователя,
+     * но нет у того, для кого составляются рекомендации
+     */
+    public List<Film> getRecommendations(int userId) {
+        List<Integer> userIdWithMaxCommonFilms = findUserIdWithMaxCommonFilms(userId);
+
+        if (userIdWithMaxCommonFilms.size() == 0) {
+            return new ArrayList<>();
+        }
+
+        List<Film> recommendations = getDifferentFilmsBetweenUsers(userIdWithMaxCommonFilms.get(0), userId);
+        log.info("List of recommended films has been formed");
+        return recommendations;
+    }
+
+    /**
+     * Поиск id пользователя с максимальным числом фильмов,
+     * которые также есть у пользователя, для которого составляются рекомендации
+     */
+    private List<Integer> findUserIdWithMaxCommonFilms(int id) {
+        String sqlFindUserWithMaxCommonFilms = "SELECT l.user_id " +
+                "FROM likes AS l " +
+                "JOIN ( " +
+                "SELECT film_id AS filmId, user_id AS userId " +
+                "FROM likes WHERE user_id = ? " +
+                ") AS u ON l.film_id = u.filmId " +
+                "WHERE NOT l.user_id = u.userId " +
+                "GROUP BY l.user_id " +
+                "ORDER BY COUNT(*) DESC " +
+                "LIMIT 1";
+
+        return jdbcTemplate.queryForList(sqlFindUserWithMaxCommonFilms, Integer.class, id);
+    }
+
+    /**
+     * Поиск фильмов пользователя с id = fromUserId, которых нет у пользователя с id = toUserId
+     */
+    private List<Film> getDifferentFilmsBetweenUsers(int fromUserId, int toUserId) {
+        String sqlGetDifferentFilmsBetweenUsers = "SELECT * " +
+                "FROM film f " +
+                "WHERE film_id IN ( " +
+                "SELECT l.film_id " +
+                "FROM likes AS l " +
+                "WHERE l.user_id = ? " +
+                "AND l.film_id NOT IN ( " +
+                "SELECT film_id AS filmId " +
+                "FROM likes WHERE user_id = ? " +
+                ")" +
+                ")";
+        return jdbcTemplate.query(sqlGetDifferentFilmsBetweenUsers, (rs, rowNum) -> makeFilm(rs), fromUserId, toUserId);
+    }
+
+    /**
      * Создание из ResultSet сложного объекта - film, который включает подобъект:
      * "mpa": { "id": 3, "name": "PG-13" }
      * и список объектов:
      * "genres": [{"id": 1, "name": "Комедия"}, {"id": 2, "name": "Драма"}, ...]
      */
     private Film makeFilm(ResultSet rs) throws SQLException {
-         Film film = new Film()
-                 .setId(rs.getInt("film_id"))
-                 .setName(rs.getString("name"))
-                 .setDescription(rs.getString("description"))
-                 .setReleaseDate(rs.getDate("release_date").toLocalDate())
-                 .setDuration(rs.getInt("duration"))
-                 .setMpa(mpaDao.getMpaById(rs.getInt("rating_id")))
-                 .setDirectors(directorDao.findAllDirectorBooksForFilm(rs.getInt("film_id")))
-                 .setGenres(genreDao.findAllGenresForFilm(rs.getInt("film_id")));
+        Film film = new Film()
+                .setId(rs.getInt("film_id"))
+                .setName(rs.getString("name"))
+                .setDescription(rs.getString("description"))
+                .setReleaseDate(rs.getDate("release_date").toLocalDate())
+                .setDuration(rs.getInt("duration"))
+                .setMpa(mpaDao.getMpaById(rs.getInt("rating_id")))
+                .setDirectors(directorDao.findAllDirectorBooksForFilm(rs.getInt("film_id")))
+                .setGenres(genreDao.findAllGenresForFilm(rs.getInt("film_id")));
 
         return film;
     }
