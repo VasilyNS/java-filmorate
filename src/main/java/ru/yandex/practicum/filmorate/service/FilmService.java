@@ -8,6 +8,9 @@ import ru.yandex.practicum.filmorate.dao.FilmDao;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.yandex.practicum.filmorate.Constants.SEARCH_FILM_BY_DIRECTOR;
+import static ru.yandex.practicum.filmorate.Constants.SEARCH_FILM_BY_NAME;
+
 /**
  * Класс для реализации операций с фильмами: добавление и удаление лайка,
  * вывод 10 наиболее популярных фильмов по количеству лайков.
@@ -49,10 +52,15 @@ public class FilmService {
 
     public List<Film> search(String query, List<String> by) {
         List<Film> films = new ArrayList<>();
-        List<Film> filmsByDir = filmDao.searchByDir(query);
-        List<Film> filmsByName = filmDao.searchByName(query);
-        films.addAll(filmsByDir);
-        films.addAll(filmsByName);
+
+        if (by.contains(SEARCH_FILM_BY_DIRECTOR)) {
+            films.addAll(filmDao.searchByDir(query));
+        }
+        if (by.contains(SEARCH_FILM_BY_NAME)) {
+            films.addAll(filmDao.searchByName(query));
+        }
+
         return films;
     }
+
 }

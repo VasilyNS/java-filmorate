@@ -283,20 +283,30 @@ public class FilmDaoImpl implements FilmDao {
         return jdbcTemplate.query(sqlGetDifferentFilmsBetweenUsers, (rs, rowNum) -> makeFilm(rs), fromUserId, toUserId);
     }
 
-    public List<Film> searchByDir(String query) {
-        String sqlQuery = "SELECT * FROM film WHERE film.name LIKE '%" + query + "%'";
-        List<Film> allFilms = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs));
+    /**
+     * Поиск фильмов по части названия фильма
+     */
+    public List<Film> searchByName(String query) {
+        String sqlQuery = "SELECT f.* FROM film AS f " +
+                "WHERE LOWER(f.name) LIKE '%" + query.toLowerCase() + "%'";
+        List<Film> films = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs));
 
-        log.info("List of all films has been sent");
-        return allFilms;
+        log.info("Sent a list of all movies found by name");
+        return films;
     }
 
-    public List<Film> searchByName(String query) {
-        String sqlQuery = "SELECT * FROM film WHERE film.name LIKE '%" + query + "%'";
-        List<Film> allFilms = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs));
+    /**
+     * Поиск фильмов по части имени режиссера
+     */
+    public List<Film> searchByDir(String query) {
+        String sqlQuery = "SELECT f.* FROM film AS f " +
+                "JOIN director AS d ON f.film_id = d.film_id " +
+                "JOIN director_book AS db ON d.dir_id = db.dir_id " +
+                "WHERE LOWER(db.name) LIKE '%" + query.toLowerCase() + "%'";
+        List<Film> films = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs));
 
-        log.info("List of all films has been sent");
-        return allFilms;
+        log.info("Sent a list of all movies found by name of director");
+        return films;
     }
 
     /**
