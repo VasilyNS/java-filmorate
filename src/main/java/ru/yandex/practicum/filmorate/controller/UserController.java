@@ -106,6 +106,7 @@ public class UserController {
      */
     @GetMapping("/users/{id}/feed")
     public List<Event> getUserFeed(@PathVariable int id) {
+        userService.getById(id); //если пользователя нет - выкинет ошибку
         return userService.getUserFeed(id);
     }
 }
