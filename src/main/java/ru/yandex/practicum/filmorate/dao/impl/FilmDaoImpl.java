@@ -102,7 +102,7 @@ public class FilmDaoImpl implements FilmDao {
         Film checkFilm = getById(id);
         User checkUser = userDao.getById(userId);
 
-        try{
+        try {
             String sql = "INSERT INTO likes(film_id, user_id) VALUES (?, ?)";
             jdbcTemplate.update(sql, id, userId);
         } catch (Exception e) {
