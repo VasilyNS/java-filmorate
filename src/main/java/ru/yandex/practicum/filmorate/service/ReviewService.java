@@ -32,7 +32,7 @@ public class ReviewService {
                 addedReview.getUserId(),
                 FeedEventType.REVIEW,
                 FeedOperation.ADD,
-                addedReview.getFilmId()
+                addedReview.getReviewId()
         );
 
         eventDao.createFeed(event);
@@ -48,7 +48,7 @@ public class ReviewService {
                 updatedReview.getUserId(),
                 FeedEventType.REVIEW,
                 FeedOperation.UPDATE,
-                updatedReview.getFilmId()
+                updatedReview.getReviewId()
         );
 
         eventDao.createFeed(event);
@@ -64,7 +64,7 @@ public class ReviewService {
                 review.getUserId(),
                 FeedEventType.REVIEW,
                 FeedOperation.REMOVE,
-                review.getFilmId()
+                review.getReviewId()
         );
 
         eventDao.createFeed(event);
