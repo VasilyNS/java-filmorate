@@ -2,9 +2,14 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.EventDao;
+import ru.yandex.practicum.filmorate.enums.FeedEventType;
+import ru.yandex.practicum.filmorate.enums.FeedOperation;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.dao.UserDao;
 
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -16,6 +21,7 @@ import java.util.List;
 public class UserService {
 
     private final UserDao userDao;
+    private final EventDao eventDao;
 
     public User getById(int id) {
         return userDao.getById(id);
@@ -23,6 +29,16 @@ public class UserService {
 
     public void addToFriend(int id1, int id2) {
         userDao.addToFriend(id1, id2);
+
+        Event event = new Event(
+                Instant.now().toEpochMilli(),
+                id1,
+                FeedEventType.FRIEND,
+                FeedOperation.ADD,
+                id2
+        );
+
+        eventDao.createFeed(event);
     }
 
     public List<User> findFriends(int id) {
@@ -35,9 +51,23 @@ public class UserService {
 
     public void deleteFromFriends(int id1, int id2) {
         userDao.deleteFromFriends(id1, id2);
+
+        Event event = new Event(
+                Instant.now().toEpochMilli(),
+                id1,
+                FeedEventType.FRIEND,
+                FeedOperation.REMOVE,
+                id2
+        );
+
+        eventDao.createFeed(event);
     }
 
     public void deleteUser(int id) {
         userDao.deleteUser(id);
+    }
+
+    public List<Event> getUserFeed(int id) {
+        return eventDao.getFeed(id);
     }
 }

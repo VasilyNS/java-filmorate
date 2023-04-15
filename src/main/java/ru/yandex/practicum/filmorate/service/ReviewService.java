@@ -2,9 +2,14 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.EventDao;
 import ru.yandex.practicum.filmorate.dao.ReviewDao;
+import ru.yandex.practicum.filmorate.enums.FeedEventType;
+import ru.yandex.practicum.filmorate.enums.FeedOperation;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Review;
 
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -17,16 +22,53 @@ import java.util.List;
 public class ReviewService {
 
     private final ReviewDao reviewDao;
+    private final EventDao eventDao;
 
     public Review create(Review review) {
-        return reviewDao.create(review);
+        Review addedReview = reviewDao.create(review);
+
+        Event event = new Event(
+                Instant.now().toEpochMilli(),
+                addedReview.getUserId(),
+                FeedEventType.REVIEW,
+                FeedOperation.ADD,
+                addedReview.getReviewId()
+        );
+
+        eventDao.createFeed(event);
+
+        return addedReview;
     }
 
     public Review put(Review review) {
-        return reviewDao.put(review);
+        Review updatedReview = reviewDao.put(review);
+
+        Event event = new Event(
+                Instant.now().toEpochMilli(),
+                updatedReview.getUserId(),
+                FeedEventType.REVIEW,
+                FeedOperation.UPDATE,
+                updatedReview.getReviewId()
+        );
+
+        eventDao.createFeed(event);
+
+        return updatedReview;
     }
 
     public void deleteReview(int id) {
+        Review review = findById(id);
+
+        Event event = new Event(
+                Instant.now().toEpochMilli(),
+                review.getUserId(),
+                FeedEventType.REVIEW,
+                FeedOperation.REMOVE,
+                review.getReviewId()
+        );
+
+        eventDao.createFeed(event);
+
         reviewDao.deleteReview(id);
     }
 
