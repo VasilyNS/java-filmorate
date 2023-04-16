@@ -213,7 +213,7 @@ public class FilmDaoImpl implements FilmDao {
             log.info("List of films sorted by likes has been sent, dir. id=" + id);
             return sortFilms;
         }
-        return null;
+        return new ArrayList<>();
     }
 
     public List<Film> getCommonFilms(int userId, int friendId) {

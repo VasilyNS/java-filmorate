@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.DateUtils;
 import ru.yandex.practicum.filmorate.dao.EventDao;
 import ru.yandex.practicum.filmorate.dao.ReviewDao;
 import ru.yandex.practicum.filmorate.enums.FeedEventType;
@@ -28,7 +29,7 @@ public class ReviewService {
         Review addedReview = reviewDao.create(review);
 
         Event event = new Event(
-                Instant.now().toEpochMilli(),
+                DateUtils.now().toEpochMilli(),
                 addedReview.getUserId(),
                 FeedEventType.REVIEW,
                 FeedOperation.ADD,
@@ -44,7 +45,7 @@ public class ReviewService {
         Review updatedReview = reviewDao.put(review);
 
         Event event = new Event(
-                Instant.now().toEpochMilli(),
+                DateUtils.now().toEpochMilli(),
                 updatedReview.getUserId(),
                 FeedEventType.REVIEW,
                 FeedOperation.UPDATE,
@@ -60,7 +61,7 @@ public class ReviewService {
         Review review = findById(id);
 
         Event event = new Event(
-                Instant.now().toEpochMilli(),
+                DateUtils.now().toEpochMilli(),
                 review.getUserId(),
                 FeedEventType.REVIEW,
                 FeedOperation.REMOVE,
