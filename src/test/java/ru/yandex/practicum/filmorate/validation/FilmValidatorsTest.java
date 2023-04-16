@@ -14,7 +14,7 @@ class FilmValidatorsTest {
     private Film film;
 
     @BeforeEach
-    void InitEach() {
+    void initEach() {
         film = new Film();
         film.setName("nisi eiusmod");
         film.setDescription("*".repeat(Constants.MAX_FILM_DESC_LENGTH));
