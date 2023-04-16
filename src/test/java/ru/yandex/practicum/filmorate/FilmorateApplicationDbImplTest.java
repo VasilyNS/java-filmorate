@@ -62,7 +62,6 @@ class FilmorateApplicationDbImplTest {
                 LocalDate.of(2001, 12, 25));
         testfilm = new Film(333, "testN", "testD", LocalDate.of(2001, 12, 25),
                 177, new Mpa(1, ""), new ArrayList<GenreBook>(), new ArrayList<DirectorBook>());
-
     }
 
     @AfterEach
