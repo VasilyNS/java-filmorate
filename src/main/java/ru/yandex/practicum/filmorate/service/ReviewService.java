@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.DateUtils;
+import ru.yandex.practicum.filmorate.utils.DateUtils;
 import ru.yandex.practicum.filmorate.dao.EventDao;
 import ru.yandex.practicum.filmorate.dao.ReviewDao;
 import ru.yandex.practicum.filmorate.enums.FeedEventType;
@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.enums.FeedOperation;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Review;
 
-import java.time.Instant;
 import java.util.List;
 
 /**
