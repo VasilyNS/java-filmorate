@@ -2,9 +2,6 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.dao.DirectorDao;
 import ru.yandex.practicum.filmorate.dao.FilmDao;
 import ru.yandex.practicum.filmorate.model.DirectorBook;
@@ -42,8 +39,5 @@ public class DirectorService {
     public List<Film> findByDirWithSort(int id, String sortBy) {
         return filmDao.findByDirWithSort(id, sortBy);
     }
-
-
-
 
 }
