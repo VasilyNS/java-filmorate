@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.util.DateUtils;
 import ru.yandex.practicum.filmorate.dao.EventDao;
 import ru.yandex.practicum.filmorate.enums.FeedEventType;
 import ru.yandex.practicum.filmorate.enums.FeedOperation;
@@ -9,7 +10,6 @@ import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.dao.UserDao;
 
-import java.time.Instant;
 import java.util.List;
 
 /**
@@ -23,15 +23,27 @@ public class UserService {
     private final UserDao userDao;
     private final EventDao eventDao;
 
+    public User createUser(User user) {
+        return userDao.createUser(user);
+    }
+
     public User getById(int id) {
         return userDao.getById(id);
+    }
+
+    public User updateUser(User user) {
+        return userDao.updateUser(user);
+    }
+
+    public List<User> findAllUsers() {
+        return userDao.findAllUsers();
     }
 
     public void addToFriend(int id1, int id2) {
         userDao.addToFriend(id1, id2);
 
         Event event = new Event(
-                Instant.now().toEpochMilli(),
+                DateUtils.now().toEpochMilli(),
                 id1,
                 FeedEventType.FRIEND,
                 FeedOperation.ADD,
@@ -53,7 +65,7 @@ public class UserService {
         userDao.deleteFromFriends(id1, id2);
 
         Event event = new Event(
-                Instant.now().toEpochMilli(),
+                DateUtils.now().toEpochMilli(),
                 id1,
                 FeedEventType.FRIEND,
                 FeedOperation.REMOVE,

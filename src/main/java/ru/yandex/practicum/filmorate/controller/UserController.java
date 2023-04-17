@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.dao.UserDao;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class UserController {
-    private final UserDao userDao;
+
     private final UserService userService;
     private final FilmService filmService;
 
@@ -25,7 +24,7 @@ public class UserController {
      */
     @PostMapping("/users")
     public User create(@RequestBody User user) {
-        return userDao.createUser(user);
+        return userService.createUser(user);
     }
 
     /**
@@ -41,7 +40,7 @@ public class UserController {
      */
     @PutMapping("/users")
     public User put(@RequestBody User user) {
-        return userDao.updateUser(user);
+        return userService.updateUser(user);
     }
 
     /**
@@ -49,7 +48,7 @@ public class UserController {
      */
     @GetMapping("/users")
     public List<User> getAll() {
-        return userDao.findAllUsers();
+        return userService.findAllUsers();
     }
 
     /**

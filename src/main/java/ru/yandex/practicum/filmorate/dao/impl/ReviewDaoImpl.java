@@ -59,8 +59,7 @@ public class ReviewDaoImpl implements ReviewDao {
                 review.getFilmId(),
                 review.getReviewId());
 
-        log.info("New review was created with id=" + id);
-
+        log.info("(DV1) New review was created with id=" + id);
         return review;
     }
 
@@ -101,6 +100,7 @@ public class ReviewDaoImpl implements ReviewDao {
             jdbcTemplate.update("update REVIEW_BOOK set content = ?, is_positive = ? where review_id = ?",
                     review.getContent(), review.getIsPositive(), review.getReviewId());
 
+            log.info("(DV2) Review was updated with id=" + review.getReviewId());
             return findById(review.getReviewId());
         } else {
             throw new ReviewNotFoundException(review.getReviewId());
@@ -114,6 +114,8 @@ public class ReviewDaoImpl implements ReviewDao {
         jdbcTemplate.update("delete from USER_FILM_REVIEW where review_id = ?", reviewId);
         jdbcTemplate.update("delete from REVIEW_ESTIMATION where review_id = ?", reviewId);
         jdbcTemplate.update("delete from REVIEW_BOOK where review_id = ?", reviewId);
+
+        log.info("(DV3) Review was deleted with id=" + reviewId);
     }
 
     @Override
@@ -125,6 +127,7 @@ public class ReviewDaoImpl implements ReviewDao {
                 "where rb.review_id = ?", reviewId);
 
         if (reviewRows.next()) {
+            log.info("(DV4) Review was gotten with id=" + reviewId);
             return Review.builder()
                     .reviewId(reviewRows.getInt("review_id"))
                     .content(reviewRows.getString("content"))
@@ -145,6 +148,9 @@ public class ReviewDaoImpl implements ReviewDao {
 
         jdbcTemplate.update("insert into review_estimation(user_id, review_id, is_positive) " +
                 "values (?, ?, ?)", userId, reviewId, isPositive);
+
+        log.info("(DV6) User reaction to the review has been added. reviewId="
+                + reviewId + " userId=" + userId);
     }
 
     @Override
@@ -153,6 +159,9 @@ public class ReviewDaoImpl implements ReviewDao {
 
         jdbcTemplate.update("delete from review_estimation " +
                 "where user_id = ? and review_id = ? and review_id = ?", userId, reviewId, isPositive);
+
+        log.info("(DV7) User reaction to the review has been deleted. reviewId="
+                + reviewId + " userId=" + userId);
     }
 
     private Review mapRowToReview(ResultSet resultSet, int rowNum) throws SQLException {

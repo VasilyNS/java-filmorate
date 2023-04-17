@@ -43,7 +43,7 @@ public class FilmDaoImpl implements FilmDao {
         // Запись режиссеров фильма в базу
         directorDao.addDirectorsToDbForFilm(id, film.getDirectors());
 
-        log.info("New film created with id=" + id);
+        log.info("(VS9) New film created with id=" + id);
         Film filmUpd = getById(id);
         return filmUpd;
     }
@@ -55,7 +55,7 @@ public class FilmDaoImpl implements FilmDao {
         if (allFilms.size() == 0) {
             throw new FilmNotFoundException(id);
         } else {
-            log.info("Film was gotten with id=" + id);
+            log.info("(VS10) Film was gotten with id=" + id);
             return allFilms.get(0);
         }
     }
@@ -86,7 +86,7 @@ public class FilmDaoImpl implements FilmDao {
 
         // После возможного удаления неуникальных id жанров, что СУБД сделает автоматом на основе PK,
         // объект фильма надо просто перечитать из БД
-        log.info("User was updated with id=" + film.getId());
+        log.info("(VS11) User was updated with id=" + film.getId());
         return getById(film.getId());
     }
 
@@ -94,7 +94,7 @@ public class FilmDaoImpl implements FilmDao {
         String sql = "SELECT * FROM film";
         List<Film> allFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs));
 
-        log.info("List of all films has been sent");
+        log.info("(VS12) List of all films has been sent");
         return allFilms;
     }
 
@@ -109,7 +109,7 @@ public class FilmDaoImpl implements FilmDao {
             log.warn("Error on write to DB: " + e.getMessage());
         }
 
-        log.info("Like for film id=" + id + " form user with id=" + userId);
+        log.info("(VS13) Like for film id=" + id + " form user with id=" + userId);
     }
 
 
@@ -120,7 +120,7 @@ public class FilmDaoImpl implements FilmDao {
         String sql = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
         jdbcTemplate.update(sql, id, userId);
 
-        log.info("Like deleted for film id=" + id + " form user with id=" + userId);
+        log.info("(VS14) Like deleted for film id=" + id + " form user with id=" + userId);
     }
 
     /**
@@ -131,7 +131,7 @@ public class FilmDaoImpl implements FilmDao {
     public List<Film> findPopular(int count, int genreId, int year) {
         List<Film> popFilms;
 
-        //если в запросе не передали жанр и год, то выводим все фильмы
+        // если в запросе не передали жанр и год, то выводим все фильмы (VS15 - только первый блок if)
         if (genreId == 0 && year == 0) {
             String sql = "SELECT f.*, COUNT(l.user_id) AS c FROM film AS f " +
                     "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
@@ -139,7 +139,8 @@ public class FilmDaoImpl implements FilmDao {
                     "ORDER BY c DESC " +
                     "LIMIT ?";
             popFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), count);
-        } else if (genreId == 0) { //если жанр не указан, то выводим по году
+        } else if (genreId == 0) {
+            // если жанр не указан, то выводим по году
             String sql = "SELECT f.*, COUNT(l.user_id) AS c FROM film AS f " +
                     "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
                     "LEFT JOIN genre AS g ON f.film_id = g.film_id " +
@@ -149,7 +150,8 @@ public class FilmDaoImpl implements FilmDao {
                     "ORDER BY c DESC " +
                     "LIMIT ?";
             popFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), year, count);
-        } else if (year == 0) { //если год не указан, то выводим по жанру
+        } else if (year == 0) {
+            // если год не указан, то выводим по жанру
             String sql = "SELECT f.*, COUNT(l.user_id) AS c FROM film AS f " +
                     "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
                     "LEFT JOIN genre AS g ON f.film_id = g.film_id " +
@@ -171,7 +173,7 @@ public class FilmDaoImpl implements FilmDao {
             popFilms = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), genreId, year, count);
         }
 
-        log.info("List of popular films has been sent, limit=" + count + ", genreId=" + genreId + ", year=" + year);
+        log.info("(BE1) List of popular films has been sent, limit=" + count + ", genreId=" + genreId + ", year=" + year);
         return popFilms;
     }
 
@@ -180,7 +182,7 @@ public class FilmDaoImpl implements FilmDao {
 
         jdbcTemplate.update(sqlQuery, id);
 
-        log.info("Film id: " + id + " deleted");
+        log.info("(RF2) Film id: " + id + " deleted");
     }
 
     public List<Film> findByDirWithSort(int id, String sortBy) {
@@ -210,10 +212,10 @@ public class FilmDaoImpl implements FilmDao {
                 throw new FilmNotFoundException(id);
             }
 
-            log.info("List of films sorted by likes has been sent, dir. id=" + id);
+            log.info("(VS16) List of films sorted by likes has been sent, dir. id=" + id);
             return sortFilms;
         }
-        return null;
+        return new ArrayList<>();
     }
 
     public List<Film> getCommonFilms(int userId, int friendId) {
@@ -229,7 +231,7 @@ public class FilmDaoImpl implements FilmDao {
 
         List<Film> commonFilms = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs), userId, friendId);
 
-        log.info("Getting common films");
+        log.info("(RF3) Getting common films");
         return commonFilms;
     }
 
@@ -247,7 +249,7 @@ public class FilmDaoImpl implements FilmDao {
         }
 
         List<Film> recommendations = getDifferentFilmsBetweenUsers(userIdWithMaxCommonFilms.get(0), userId);
-        log.info("List of recommended films has been formed");
+        log.info("(AN1) List of recommended films has been formed");
         return recommendations;
     }
 
@@ -296,7 +298,7 @@ public class FilmDaoImpl implements FilmDao {
                 "WHERE LOWER(f.name) LIKE '%" + query.toLowerCase() + "%'";
         List<Film> films = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs));
 
-        log.info("Sent a list of all movies found by name");
+        log.info("(AN2) Sent a list of all movies found by name");
         return films;
     }
 
@@ -310,7 +312,7 @@ public class FilmDaoImpl implements FilmDao {
                 "WHERE LOWER(db.name) LIKE '%" + query.toLowerCase() + "%'";
         List<Film> films = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs));
 
-        log.info("Sent a list of all movies found by name of director");
+        log.info("(AN3) Sent a list of all movies found by name of director");
         return films;
     }
 
