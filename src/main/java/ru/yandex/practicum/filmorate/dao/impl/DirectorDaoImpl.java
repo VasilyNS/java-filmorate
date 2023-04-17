@@ -24,7 +24,7 @@ public class DirectorDaoImpl implements DirectorDao {
     public List<DirectorBook> findAllDirectors() {
         String sql = "SELECT * FROM director_book";
 
-        log.info("List of all Directors has been sent");
+        log.info("(VS17) List of all Directors has been sent");
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeDirectorBook(rs));
     }
 
@@ -35,7 +35,7 @@ public class DirectorDaoImpl implements DirectorDao {
         if (allDirectorBooks.size() == 0) {
             throw new DirectorNotFoundException(id);
         } else {
-            log.info("DirectorBook was gotten with id=" + id);
+            log.info("(VS18) DirectorBook was gotten with id=" + id);
             return allDirectorBooks.get(0);
         }
     }
@@ -50,7 +50,7 @@ public class DirectorDaoImpl implements DirectorDao {
         int id = simpleJdbcInsert.executeAndReturnKey(directorBook.toMap()).intValue();
         directorBook.setId(id);
 
-        log.info("New directorBook was created with id=" + id);
+        log.info("(VS19) New directorBook was created with id=" + id);
         return directorBook;
     }
 
@@ -71,7 +71,7 @@ public class DirectorDaoImpl implements DirectorDao {
                 directorBook.getId()
         );
 
-        log.info("DirectorBook was updated with id=" + directorBook.getId());
+        log.info("(VS20) DirectorBook was updated with id=" + directorBook.getId());
         return directorBook;
     }
 
@@ -101,6 +101,8 @@ public class DirectorDaoImpl implements DirectorDao {
 
         sql = "DELETE FROM director_book WHERE dir_id = ?";
         jdbcTemplate.update(sql, id);
+
+        log.info("(VS21) Director was deleted with id=" + id);
     }
 
     private DirectorBook makeDirectorBook(ResultSet rs) throws SQLException {

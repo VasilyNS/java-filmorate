@@ -1,7 +1,9 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.util.DateUtils;
 import ru.yandex.practicum.filmorate.dao.EventDao;
 import ru.yandex.practicum.filmorate.dao.ReviewDao;
 import ru.yandex.practicum.filmorate.enums.FeedEventType;
@@ -9,7 +11,6 @@ import ru.yandex.practicum.filmorate.enums.FeedOperation;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Review;
 
-import java.time.Instant;
 import java.util.List;
 
 /**
@@ -17,6 +18,7 @@ import java.util.List;
  * добавление и удаление лайка или дизлайка к отзывам,
  * Каждый пользователь может поставить лайк отзыву только один раз.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
@@ -28,13 +30,12 @@ public class ReviewService {
         Review addedReview = reviewDao.create(review);
 
         Event event = new Event(
-                Instant.now().toEpochMilli(),
+                DateUtils.now().toEpochMilli(),
                 addedReview.getUserId(),
                 FeedEventType.REVIEW,
                 FeedOperation.ADD,
                 addedReview.getReviewId()
         );
-
         eventDao.createFeed(event);
 
         return addedReview;
@@ -44,13 +45,12 @@ public class ReviewService {
         Review updatedReview = reviewDao.put(review);
 
         Event event = new Event(
-                Instant.now().toEpochMilli(),
+                DateUtils.now().toEpochMilli(),
                 updatedReview.getUserId(),
                 FeedEventType.REVIEW,
                 FeedOperation.UPDATE,
                 updatedReview.getReviewId()
         );
-
         eventDao.createFeed(event);
 
         return updatedReview;
@@ -60,13 +60,12 @@ public class ReviewService {
         Review review = findById(id);
 
         Event event = new Event(
-                Instant.now().toEpochMilli(),
+                DateUtils.now().toEpochMilli(),
                 review.getUserId(),
                 FeedEventType.REVIEW,
                 FeedOperation.REMOVE,
                 review.getReviewId()
         );
-
         eventDao.createFeed(event);
 
         reviewDao.deleteReview(id);
@@ -77,6 +76,7 @@ public class ReviewService {
     }
 
     public List<Review> findAllReviewsByFilmId(Integer count, Integer filmId) {
+        log.info("(DV4) List of reviews has been sent for film with id=" + filmId);
         return reviewDao.findAllReviewsByFilmId(count, filmId);
     }
 

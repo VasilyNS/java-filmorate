@@ -21,7 +21,8 @@ public class GenreDaoImpl implements GenreDao {
 
     public List<GenreBook> findAllGenreBook() {
         String sql = "SELECT * FROM genre_book";
-        log.info("List of all Genres has been sent");
+
+        log.info("(VS22) List of all Genres has been sent");
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeGenreBook(rs));
     }
 
@@ -32,7 +33,7 @@ public class GenreDaoImpl implements GenreDao {
         if (allGenres.size() == 0) {
             throw new GenreBookNotFoundException(id);
         } else {
-            log.info("Genre was gotten with id=" + id);
+            log.info("(VS23) Genre was gotten with id=" + id);
             return allGenres.get(0);
         }
     }

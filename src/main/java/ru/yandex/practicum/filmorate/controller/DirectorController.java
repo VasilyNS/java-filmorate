@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.dao.DirectorDao;
 import ru.yandex.practicum.filmorate.model.DirectorBook;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.DirectorService;
@@ -14,26 +13,25 @@ import java.util.List;
 public class DirectorController {
 
     private final DirectorService directorService;
-    private final DirectorDao directorDao;
 
     @GetMapping("/directors")
     public List<DirectorBook> findAllDirectors() {
-        return directorDao.findAllDirectors();
+        return directorService.findAllDirectors();
     }
 
     @GetMapping("/directors/{id}")
     public DirectorBook getDirectorById(@PathVariable int id) {
-        return directorDao.getDirectorById(id);
+        return directorService.getDirectorById(id);
     }
 
     @PostMapping("/directors")
     public DirectorBook create(@RequestBody DirectorBook directorBook) {
-        return directorDao.createDirector(directorBook);
+        return directorService.createDirector(directorBook);
     }
 
     @PutMapping("/directors")
     public DirectorBook put(@RequestBody DirectorBook directorBook) {
-        return directorDao.updateDirector(directorBook);
+        return directorService.updateDirector(directorBook);
     }
 
     /**
@@ -49,7 +47,7 @@ public class DirectorController {
 
     @DeleteMapping("/directors/{id}")
     public void delByDir(@PathVariable int id) {
-        directorDao.delById(id);
+        directorService.delById(id);
     }
 
 }

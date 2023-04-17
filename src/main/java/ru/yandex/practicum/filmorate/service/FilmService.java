@@ -2,19 +2,19 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import ru.yandex.practicum.filmorate.util.DateUtils;
 import ru.yandex.practicum.filmorate.dao.EventDao;
 import ru.yandex.practicum.filmorate.enums.FeedEventType;
 import ru.yandex.practicum.filmorate.enums.FeedOperation;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.dao.FilmDao;
+import ru.yandex.practicum.filmorate.Constants;
 
-import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-
-import static ru.yandex.practicum.filmorate.Constants.SEARCH_FILM_BY_DIRECTOR;
-import static ru.yandex.practicum.filmorate.Constants.SEARCH_FILM_BY_NAME;
 
 /**
  * Класс для реализации операций с фильмами: добавление и удаление лайка,
@@ -32,11 +32,23 @@ public class FilmService {
         return filmDao.getById(id);
     }
 
+    public Film createFilm(Film film) {
+        return filmDao.createFilm(film);
+    }
+
+    public Film updateFilm(Film film) {
+        return filmDao.updateFilm(film);
+    }
+
+    public Collection<Film> findAllFilms() {
+        return filmDao.findAllFilms();
+    }
+
     public void addLike(int id, int userId) {
         filmDao.addLike(id, userId);
 
         Event event = new Event(
-                Instant.now().toEpochMilli(),
+                DateUtils.now().toEpochMilli(),
                 userId,
                 FeedEventType.LIKE,
                 FeedOperation.ADD,
@@ -50,7 +62,7 @@ public class FilmService {
         filmDao.delLike(id, userId);
 
         Event event = new Event(
-                Instant.now().toEpochMilli(),
+                DateUtils.now().toEpochMilli(),
                 userId,
                 FeedEventType.LIKE,
                 FeedOperation.REMOVE,
@@ -79,10 +91,10 @@ public class FilmService {
     public List<Film> search(String query, List<String> by) {
         List<Film> films = new ArrayList<>();
 
-        if (by.contains(SEARCH_FILM_BY_DIRECTOR)) {
+        if (by.contains(Constants.SEARCH_FILM_BY_DIRECTOR)) {
             films.addAll(filmDao.searchByDir(query));
         }
-        if (by.contains(SEARCH_FILM_BY_NAME)) {
+        if (by.contains(Constants.SEARCH_FILM_BY_NAME)) {
             films.addAll(filmDao.searchByName(query));
         }
 

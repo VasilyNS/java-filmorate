@@ -34,7 +34,7 @@ public class EventDaoImpl implements EventDao {
                 event.getEntityId()
         );
 
-        log.info("Event id: " + event.getEventId() + " added to feed");
+        log.info("(RF4) Event id: " + event.getEventId() + " added to feed");
     }
 
     @Override
@@ -45,8 +45,7 @@ public class EventDaoImpl implements EventDao {
 
         List<Event> feed = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeEvent(rs), userId);
 
-        log.info("Getting feed by user id: " + userId);
-
+        log.info("(RF5) Getting feed by user id: " + userId);
         return feed;
     }
 

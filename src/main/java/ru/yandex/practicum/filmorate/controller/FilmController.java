@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.dao.FilmDao;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -13,7 +12,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FilmController {
 
-    private final FilmDao filmDao;
     private final FilmService filmService;
 
     /**
@@ -21,7 +19,7 @@ public class FilmController {
      */
     @PostMapping("/films")
     public Film create(@RequestBody Film film) {
-        return filmDao.createFilm(film);
+        return filmService.createFilm(film);
     }
 
     /**
@@ -37,7 +35,7 @@ public class FilmController {
      */
     @PutMapping("/films")
     public Film put(@RequestBody Film film) {
-        return filmDao.updateFilm(film);
+        return filmService.updateFilm(film);
     }
 
     /**
@@ -45,7 +43,7 @@ public class FilmController {
      */
     @GetMapping("/films")
     public Collection<Film> getAll() {
-        return filmDao.findAllFilms();
+        return filmService.findAllFilms();
     }
 
     /**
