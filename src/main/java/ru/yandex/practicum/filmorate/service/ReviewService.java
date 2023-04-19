@@ -72,7 +72,7 @@ public class ReviewService {
     }
 
     public Review findById(int id) {
-        return reviewDao.findById(id);
+        return reviewDao.getdById(id);
     }
 
     public List<Review> findAllReviewsByFilmId(Integer count, Integer filmId) {

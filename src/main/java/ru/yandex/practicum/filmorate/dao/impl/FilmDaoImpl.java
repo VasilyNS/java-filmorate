@@ -60,9 +60,13 @@ public class FilmDaoImpl implements FilmDao {
         }
     }
 
+    public void checkFilm(int id) {
+        Film check = getById(id);
+    }
+
     public Film updateFilm(Film film) {
         Validators.filmValidation(film);
-        Film checkFilm = getById(film.getId());
+        checkFilm(film.getId());
 
         String sql = "UPDATE film SET " +
                 "name = ?, description = ?, release_date = ?, duration = ?, rating_id = ? " +
@@ -99,8 +103,8 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     public void addLike(int id, int userId) {
-        Film checkFilm = getById(id);
-        User checkUser = userDao.getById(userId);
+        checkFilm(id);
+        userDao.checkUser(userId);
 
         try {
             String sql = "INSERT INTO likes(film_id, user_id) VALUES (?, ?)";
@@ -114,8 +118,8 @@ public class FilmDaoImpl implements FilmDao {
 
 
     public void delLike(int id, int userId) {
-        Film checkFilm = getById(id);
-        User checkUser = userDao.getById(userId);
+        checkFilm(id);
+        userDao.checkUser(userId);
 
         String sql = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
         jdbcTemplate.update(sql, id, userId);

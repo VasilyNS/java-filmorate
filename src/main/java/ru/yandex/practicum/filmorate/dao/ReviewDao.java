@@ -17,7 +17,7 @@ public interface ReviewDao {
 
     void deleteReview(int id);
 
-    Review findById(int id);
+    Review getdById(int id);
 
     void addEstimation(int id, int userId, boolean isPositive);
 

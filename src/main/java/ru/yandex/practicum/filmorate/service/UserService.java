@@ -80,6 +80,7 @@ public class UserService {
     }
 
     public List<Event> getUserFeed(int id) {
+        userDao.checkUser(id);
         return eventDao.getFeed(id);
     }
 }

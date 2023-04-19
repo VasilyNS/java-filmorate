@@ -35,8 +35,8 @@ public class ReviewDaoImpl implements ReviewDao {
 
     @Override
     public Review create(Review review) {
-        Film film = filmDao.getById(review.getFilmId());
-        User user = userDao.getById(review.getUserId());
+        filmDao.checkFilm(review.getFilmId());
+        userDao.checkUser(review.getUserId());
 
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("REVIEW_BOOK")
@@ -91,17 +91,17 @@ public class ReviewDaoImpl implements ReviewDao {
 
     @Override
     public Review put(Review review) {
-        Film film = filmDao.getById(review.getFilmId());
-        User user = userDao.getById(review.getUserId());
+        filmDao.checkFilm(review.getFilmId());
+        userDao.checkUser(review.getUserId());
 
         if (review.getReviewId() == null) {
             return create(review);
-        } else if (findById(review.getReviewId()) != null) {
+        } else if (getdById(review.getReviewId()) != null) {
             jdbcTemplate.update("update REVIEW_BOOK set content = ?, is_positive = ? where review_id = ?",
                     review.getContent(), review.getIsPositive(), review.getReviewId());
 
             log.info("(DV2) Review was updated with id=" + review.getReviewId());
-            return findById(review.getReviewId());
+            return getdById(review.getReviewId());
         } else {
             throw new ReviewNotFoundException(review.getReviewId());
         }
@@ -109,7 +109,7 @@ public class ReviewDaoImpl implements ReviewDao {
 
     @Override
     public void deleteReview(int reviewId) {
-        Review review = findById(reviewId);
+        Review review = getdById(reviewId);
 
         jdbcTemplate.update("delete from USER_FILM_REVIEW where review_id = ?", reviewId);
         jdbcTemplate.update("delete from REVIEW_ESTIMATION where review_id = ?", reviewId);
@@ -119,7 +119,7 @@ public class ReviewDaoImpl implements ReviewDao {
     }
 
     @Override
-    public Review findById(int reviewId) {
+    public Review getdById(int reviewId) {
         SqlRowSet reviewRows = jdbcTemplate.queryForRowSet("select rb.review_id, rb.content, rb.is_positive, " +
                 "ufr.film_id, ufr.user_id \n" +
                 "from REVIEW_BOOK as rb\n" +
@@ -144,7 +144,7 @@ public class ReviewDaoImpl implements ReviewDao {
     @Override
     public void addEstimation(int reviewId, int userId, boolean isPositive) {
         User user = userDao.getById(userId);
-        Review review = findById(reviewId);
+        Review review = getdById(reviewId);
 
         jdbcTemplate.update("insert into review_estimation(user_id, review_id, is_positive) " +
                 "values (?, ?, ?)", userId, reviewId, isPositive);
@@ -155,7 +155,7 @@ public class ReviewDaoImpl implements ReviewDao {
 
     @Override
     public void deleteEstimation(int reviewId, int userId, boolean isPositive) {
-        Review review = findById(reviewId);
+        Review review = getdById(reviewId);
 
         jdbcTemplate.update("delete from review_estimation " +
                 "where user_id = ? and review_id = ? and review_id = ?", userId, reviewId, isPositive);

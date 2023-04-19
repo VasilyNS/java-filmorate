@@ -39,6 +39,8 @@ public class EventDaoImpl implements EventDao {
 
     @Override
     public List<Event> getFeed(int userId) {
+
+
         String sqlQuery = "SELECT * " +
                 "FROM feed " +
                 "WHERE user_id = ?";

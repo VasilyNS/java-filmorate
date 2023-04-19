@@ -14,6 +14,8 @@ public interface UserDao {
 
     User getById(int id);
 
+    void checkUser(int id);
+
     User updateUser(User user);
 
     List<User> findAllUsers();
