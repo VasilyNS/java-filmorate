@@ -14,6 +14,8 @@ public interface FilmDao {
 
     Film getById(int id);
 
+    void checkFilm(int id);
+
     Film updateFilm(Film film);
 
     List<Film> findAllFilms();

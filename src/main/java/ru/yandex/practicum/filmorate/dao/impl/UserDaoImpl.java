@@ -49,11 +49,16 @@ public class UserDaoImpl implements UserDao {
             log.info("(VS2) User was gotten with id=" + id);
             return allUsers.get(0);
         }
+
+    }
+
+    public void checkUser(int id) {
+        User check = getById(id);
     }
 
     public User updateUser(User user) {
         Validators.userValidation(user);
-        User checkUser = getById(user.getId());
+        checkUser(user.getId());
 
         String sql = "UPDATE users SET " +
                 "email = ?, login = ?, name = ?, birthday = ? " +
@@ -79,8 +84,8 @@ public class UserDaoImpl implements UserDao {
     }
 
     public void addToFriend(int id1, int id2) {
-        User checkUser1 = getById(id1);
-        User checkUser2 = getById(id2);
+        checkUser(id1);
+        checkUser(id2);
 
         String sql = "INSERT INTO friend(user_id_1, user_id_2) VALUES (?, ?)";
         jdbcTemplate.update(sql, id1, id2);
@@ -89,7 +94,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     public List<User> findFriends(int id) {
-        User checkUser = getById(id);
+        checkUser(id);
         List<User> userFriends = new ArrayList<>();
 
         String sql = "SELECT user_id_2 FROM friend WHERE user_id_1 = ?";
@@ -104,8 +109,8 @@ public class UserDaoImpl implements UserDao {
     }
 
     public List<User> findCommonFriends(int id1, int id2) {
-        User checkUser1 = getById(id1);
-        User checkUser2 = getById(id2);
+        checkUser(id1);
+        checkUser(id2);
 
         List<User> usersCommonFriends = new ArrayList<>();
         String sql = "(SELECT user_id_2 FROM friend WHERE user_id_1 = ?)" +
@@ -122,8 +127,8 @@ public class UserDaoImpl implements UserDao {
     }
 
     public void deleteFromFriends(int id1, int id2) {
-        User checkUser1 = getById(id1);
-        User checkUser2 = getById(id2);
+        checkUser(id1);
+        checkUser(id2);
 
         String sqlQuery = "DELETE FROM friend WHERE user_id_1 = ? AND user_id_2 = ?";
         jdbcTemplate.update(sqlQuery, id1, id2);
