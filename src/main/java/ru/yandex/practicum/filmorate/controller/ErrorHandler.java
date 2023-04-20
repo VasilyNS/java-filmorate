@@ -41,6 +41,15 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND) // 404
+    public ErrorResponse handleDirectorNotFoundException(final DirectorNotFoundException e) {
+        log.warn(e.getMessage());
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND) // 404
     public ErrorResponse handleMpaNotFoundException(final MpaNotFoundException e) {
         log.warn(e.getMessage());
         return new ErrorResponse(
@@ -48,10 +57,18 @@ public class ErrorHandler {
         );
     }
 
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND) // 404
     public ErrorResponse handleFilmNotFoundException(final FilmNotFoundException e) {
+        log.warn(e.getMessage());
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND) // 404
+    public ErrorResponse handelReviewNotFoundException(final ReviewNotFoundException e) {
         log.warn(e.getMessage());
         return new ErrorResponse(
                 e.getMessage()

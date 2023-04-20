@@ -6,7 +6,10 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * целочисленный идентификатор — id;
@@ -29,6 +32,7 @@ public class Film {
 
     private Mpa mpa;
     private List<GenreBook> genres = new ArrayList<>();
+    private List<DirectorBook> directors = new ArrayList<>();
 
     public Map<String, Object> toMap() {
         Map<String, Object> values = new HashMap<>();

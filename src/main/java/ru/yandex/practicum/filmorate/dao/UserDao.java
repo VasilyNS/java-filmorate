@@ -14,6 +14,8 @@ public interface UserDao {
 
     User getById(int id);
 
+    void checkUser(int id);
+
     User updateUser(User user);
 
     List<User> findAllUsers();
@@ -25,5 +27,7 @@ public interface UserDao {
     List<User> findCommonFriends(int id1, int id2);
 
     void deleteFromFriends(int id1, int id2);
+
+    void deleteUser(int id);
 
 }

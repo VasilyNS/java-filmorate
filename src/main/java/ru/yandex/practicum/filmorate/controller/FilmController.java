@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.dao.FilmDao;
 
 import java.util.Collection;
 import java.util.List;
@@ -13,16 +12,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FilmController {
 
-    private final FilmDao filmDao;
     private final FilmService filmService;
-
 
     /**
      * Добавление фильма
      */
     @PostMapping("/films")
     public Film create(@RequestBody Film film) {
-        return filmDao.createFilm(film);
+        return filmService.createFilm(film);
     }
 
     /**
@@ -38,20 +35,19 @@ public class FilmController {
      */
     @PutMapping("/films")
     public Film put(@RequestBody Film film) {
-        return filmDao.updateFilm(film);
+        return filmService.updateFilm(film);
     }
 
     /**
-     * Получние списка всех фильмов
+     * Получение списка всех фильмов
      */
     @GetMapping("/films")
     public Collection<Film> getAll() {
-        return filmDao.findAllFilms();
+        return filmService.findAllFilms();
     }
 
     /**
      * Пользователь ставит лайк фильму
-     *
      */
     @PutMapping("/films/{id}/like/{userId}")
     public void addLike(@PathVariable int id, @PathVariable int userId) {
@@ -67,12 +63,36 @@ public class FilmController {
     }
 
     /**
-     * Возвращает список из первых count фильмов по количеству лайков.
+     * Возвращает список самых популярных фильмов указанного жанра за нужный год.
+     * Если жанр или год не указаны, то выводит список из первых count фильмов по количеству лайков.
      * Если значение параметра count не задано, то count = 10.
      */
     @GetMapping("/films/popular")
-    public List<Film> getPopular(@RequestParam(defaultValue = "10", required = false) Integer count) {
-        return filmService.findPopular(count);
+    public List<Film> getPopular(@RequestParam(defaultValue = "10", required = false) Integer count,
+                                 @RequestParam(defaultValue = "0", required = false) Integer genreId,
+                                 @RequestParam(defaultValue = "0", required = false) Integer year) {
+        return filmService.findPopular(count, genreId, year);
+    }
+
+    /**
+     * Удаление фильма
+     */
+    @DeleteMapping("/films/{filmId}")
+    public void deleteFilm(@PathVariable int filmId) {
+        filmService.deleteFilm(filmId);
+    }
+
+    /**
+     * Вывод общих фильмов с другим пользователем
+     */
+    @GetMapping("/films/common")
+    public List<Film> getCommonFilms(@RequestParam int userId, @RequestParam int friendId) {
+        return filmService.getCommonFilms(userId, friendId);
+    }
+
+    @GetMapping("/films/search")
+    public List<Film> search(@RequestParam String query, @RequestParam List<String> by) {
+        return filmService.search(query, by);
     }
 
 }

@@ -3,9 +3,11 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.dao.UserDao;
 
 import java.util.List;
 
@@ -13,15 +15,16 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class UserController {
-    private final UserDao userDao;
+
     private final UserService userService;
+    private final FilmService filmService;
 
     /**
      * Добавление пользователя
      */
     @PostMapping("/users")
     public User create(@RequestBody User user) {
-        return userDao.createUser(user);
+        return userService.createUser(user);
     }
 
     /**
@@ -37,7 +40,7 @@ public class UserController {
      */
     @PutMapping("/users")
     public User put(@RequestBody User user) {
-        return userDao.updateUser(user);
+        return userService.updateUser(user);
     }
 
     /**
@@ -45,7 +48,7 @@ public class UserController {
      */
     @GetMapping("/users")
     public List<User> getAll() {
-        return userDao.findAllUsers();
+        return userService.findAllUsers();
     }
 
     /**
@@ -80,4 +83,28 @@ public class UserController {
         userService.deleteFromFriends(id, friendId);
     }
 
+    /**
+     * Удаление пользователя
+     */
+    @DeleteMapping("/users/{userId}")
+    public void deleteUser(@PathVariable int userId) {
+        userService.deleteUser(userId);
+    }
+
+    /**
+     * получение рекомендаций фильмов для пользователя
+     */
+    @GetMapping("/users/{id}/recommendations")
+    public List<Film> getRecommendations(@PathVariable int id) {
+        return filmService.getRecommendations(id);
+    }
+
+
+    /**
+     * Получение ленты событий пользователя
+     */
+    @GetMapping("/users/{id}/feed")
+    public List<Event> getUserFeed(@PathVariable int id) {
+        return userService.getUserFeed(id);
+    }
 }

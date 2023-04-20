@@ -19,11 +19,11 @@ public class MpaDaoImpl implements MpaDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public List<Mpa> findAllMpa(){
+    public List<Mpa> findAllMpa() {
         String sql = "SELECT * FROM rating_book";
         List<Mpa> allMpa = jdbcTemplate.query(sql, (rs, rowNum) -> makeMpa(rs));
 
-        log.info("List of all MPA has sent");
+        log.info("(VS24) List of all MPA has sent");
         return allMpa;
     }
 
@@ -34,7 +34,7 @@ public class MpaDaoImpl implements MpaDao {
         if (allMpas.size() == 0) {
             throw new MpaNotFoundException(id);
         } else {
-            log.info("MPA was gotten with id=" + id);
+            log.info("(VS25) MPA was gotten with id=" + id);
             return allMpas.get(0);
         }
     }

@@ -8,14 +8,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import ru.yandex.practicum.filmorate.dao.FilmDao;
-import ru.yandex.practicum.filmorate.dao.GenreDao;
-import ru.yandex.practicum.filmorate.dao.MpaDao;
-import ru.yandex.practicum.filmorate.dao.UserDao;
-import ru.yandex.practicum.filmorate.dao.impl.FilmDaoImpl;
-import ru.yandex.practicum.filmorate.dao.impl.GenreDaoImpl;
-import ru.yandex.practicum.filmorate.dao.impl.MpaDaoImpl;
-import ru.yandex.practicum.filmorate.dao.impl.UserDaoImpl;
+import ru.yandex.practicum.filmorate.dao.*;
+import ru.yandex.practicum.filmorate.dao.impl.*;
 import ru.yandex.practicum.filmorate.model.*;
 
 import java.time.LocalDate;
@@ -44,6 +38,7 @@ class FilmorateApplicationDbImplTest {
     private FilmDao filmDao;
     private GenreDao genreDao;
     private MpaDao mpaDao;
+    private DirectorDao directorDao;
 
     private User testuser;
     private Film testfilm;
@@ -60,12 +55,13 @@ class FilmorateApplicationDbImplTest {
         userDao = new UserDaoImpl(jdbcTemplate);
         genreDao = new GenreDaoImpl(jdbcTemplate);
         mpaDao = new MpaDaoImpl(jdbcTemplate);
-        filmDao = new FilmDaoImpl(userDao, mpaDao, genreDao, jdbcTemplate);
+        directorDao = new DirectorDaoImpl(jdbcTemplate);
+        filmDao = new FilmDaoImpl(userDao, mpaDao, genreDao, directorDao, jdbcTemplate);
 
         testuser = new User(333, "test@E.RU", "testL", "testN",
                 LocalDate.of(2001, 12, 25));
         testfilm = new Film(333, "testN", "testD", LocalDate.of(2001, 12, 25),
-                177, new Mpa(1, ""), new ArrayList<GenreBook>());
+                177, new Mpa(1, ""), new ArrayList<GenreBook>(), new ArrayList<DirectorBook>());
 
     }
 
@@ -76,7 +72,7 @@ class FilmorateApplicationDbImplTest {
 
     /**
      * Вывести в консоль список объектов для проверки:
-     * ul.forEach(o->System.out.println(o.getName()));
+     * ul.forEach(o -> System.out.println(o.getName()));
      */
     @Test
     public void testUserDaoCreateUser() {
@@ -269,14 +265,13 @@ class FilmorateApplicationDbImplTest {
         List<Film> fl = filmDao.findAllFilms();
         assertEquals(4, fl.size());
 
-        List<Film> pfl = filmDao.findPopular(1);
+        List<Film> pfl = filmDao.findPopular(1, 0, 0);
         Optional<Film> f = Optional.of(pfl.get(0));
         assertThat(f).isPresent()
                 .hasValueSatisfying(o -> assertThat(o)
                         .hasFieldOrPropertyWithValue("name", "Name film #1 qewrds"));
         assertEquals(1, pfl.size());
 
-        pfl.forEach(o->System.out.println(o.getName()));
         System.out.println();
 
         filmDao.addLike(3, 1);
@@ -285,7 +280,7 @@ class FilmorateApplicationDbImplTest {
         filmDao.addLike(3, 4);
         filmDao.addLike(3, 5);
 
-        pfl = filmDao.findPopular(1000);
+        pfl = filmDao.findPopular(1000, 0, 0);
         f = Optional.of(pfl.get(0));
         assertThat(f).isPresent()
                 .hasValueSatisfying(o -> assertThat(o)
@@ -297,7 +292,7 @@ class FilmorateApplicationDbImplTest {
         List<Film> fl = filmDao.findAllFilms();
         assertEquals(4, fl.size());
 
-        List<Film> pfl = filmDao.findPopular(1000);
+        List<Film> pfl = filmDao.findPopular(1000, 0, 0);
         Optional<Film> f = Optional.of(pfl.get(0));
         assertThat(f).isPresent()
                 .hasValueSatisfying(o -> assertThat(o)
@@ -308,7 +303,7 @@ class FilmorateApplicationDbImplTest {
         filmDao.delLike(1,3);
         filmDao.delLike(1,4);
 
-        pfl = filmDao.findPopular(1000);
+        pfl = filmDao.findPopular(1000, 0, 0);
 
         f = Optional.of(pfl.get(0));
         assertThat(f).isPresent()
@@ -321,7 +316,7 @@ class FilmorateApplicationDbImplTest {
         List<Film> fl = filmDao.findAllFilms();
         assertEquals(4, fl.size());
 
-        List<Film> pfl = filmDao.findPopular(1);
+        List<Film> pfl = filmDao.findPopular(1, 0, 0);
         assertEquals(1, pfl.size());
 
         Optional<Film> f = Optional.of(pfl.get(0));
